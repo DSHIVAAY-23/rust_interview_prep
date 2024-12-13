@@ -92,7 +92,7 @@ Yeh method `max_by_key` ka use karta hai, jo aapke program ko cleaner aur concis
 
 ---
 
-###**Max Number in an Array**
+### **Max Number in an Array**
 
 Rust mein array mein sabse bada number find karne ke liye aap `iter()` aur `max()` ka use kar sakte hain. Yaha ek example hai:
 

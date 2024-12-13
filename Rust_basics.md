@@ -189,6 +189,7 @@ fn main() {
 
 Rust's borrowing system ensures memory safety and eliminates common bugs without a garbage collector.
 
+---
 
 ### What are Generics in Rust?
 

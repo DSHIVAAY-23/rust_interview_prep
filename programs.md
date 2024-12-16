@@ -400,3 +400,109 @@ Yeh isliye kyunki `7` array mein index `3` pe hai.
 
 ---
 
+### **Program To check weather String is Palindrome or not**
+
+```rust
+fn is_palindrome(s: &str) -> bool {
+    let rev: String = s.chars().rev().collect();
+    s == rev
+}
+
+fn main(){
+    let data = "naman";
+    if is_palindrome(data){
+        println!("{} Is a palidrome", data);
+    } else{
+        println!(" {} Is not a palindrome", data);
+    }
+    
+}
+```
+Bhai, yeh code ek **palindrome** check kar raha hai. Palindrome ka matlab hota hai ki ek string ko agar ulta padhein toh bhi wahi string mile (e.g., "naman", "madam").
+
+---
+
+### **Code Explanation**
+
+#### **1. Function Definition: `is_palindrome`**
+```rust
+fn is_palindrome(s: &str) -> bool {
+    let rev: String = s.chars().rev().collect();
+    s == rev
+}
+```
+- **Input:** A string slice `&str`.
+- **Logic:**
+  - **`s.chars()`**: Converts the string into an iterator of characters.
+  - **`.rev()`**: Reverses the iterator.
+  - **`.collect()`**: Collects the reversed characters into a new `String`.
+  - Compares the original string `s` with the reversed string `rev`.
+- **Output:** Returns `true` if both are equal, otherwise `false`.
+
+---
+
+#### **2. Main Function**
+```rust
+fn main() {
+    let data = "naman"; // Example string
+    if is_palindrome(data) { // Calls `is_palindrome` function
+        println!("{} Is a palindrome", data); // If true
+    } else {
+        println!("{} Is not a palindrome", data); // If false
+    }
+}
+```
+- **`data`:** String "naman" is passed to the `is_palindrome` function.
+- Based on the result (`true` or `false`), it prints whether the string is a palindrome or not.
+
+---
+
+### **Working Example**
+
+#### Input: 
+```plaintext
+naman
+```
+
+#### Output:
+```plaintext
+naman Is a palindrome
+```
+
+#### Input: 
+```plaintext
+hello
+```
+
+#### Output:
+```plaintext
+hello Is not a palindrome
+```
+
+---
+
+### **Key Notes**
+1. **Case Sensitivity:** The function is case-sensitive. "Naman" and "naman" will be treated differently.
+2. **Spaces & Special Characters:** It will consider spaces and punctuation marks. If you want to ignore these, you’ll 
+
+------
+
+### **Case-Insensitive Palindrome Code**
+
+```rust
+fn is_palindrome(s: &str) -> bool {
+    let lower_s = s.to_lowercase(); // Convert the string to lowercase
+    let rev: String = lower_s.chars().rev().collect(); // Reverse the lowercase string
+    lower_s == rev // Compare original (lowercase) with reversed
+}
+
+fn main() {
+    let data = "Naman"; // Example with mixed case
+    if is_palindrome(data) {
+        println!("{} is a palindrome", data);
+    } else {
+        println!("{} is not a palindrome", data);
+    }
+}
+```
+----

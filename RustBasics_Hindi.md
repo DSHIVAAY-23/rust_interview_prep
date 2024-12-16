@@ -314,7 +314,6 @@ fn main() {
 ---
 
 In conclusion, **Traits** in Rust are a powerful mechanism for defining shared behavior across multiple types. They allow for abstraction, code reuse, and polymorphism, making your code more modular and flexible. Traits are a key feature in Rust that help organize and manage common functionality across different types efficiently.
-
 # Lifetimes in Rust
 
 ## Overview
@@ -378,22 +377,6 @@ Rust me **lifetimes** ek ahem concept hai jo memory safety ko ensure karta hai. 
 
 
 ---
-
-### String aur &str ka difference Rust me:  
-
-Rust me `String` aur `&str` dono hi text data handle karte hain, lekin inka kaam aur behavior alag hai. Example ke saath samjho:  
-
----
-
-#### 1. **`String`**  
-- **Heap memory me store hota hai:**  
-  Matlab iska size badh sakta hai ya kam ho sakta hai runtime ke dauran.  
-
-- **Owned type hota hai:**  
-  Jab tum `String` banate ho, to wo memory ka **owner** ban jata hai.  
-
-- **Mutability:**  
-  `String` ko tum change kar sakte ho (add karna, modify karna allowed hai).  
 
 **Example:**  
 ```rust

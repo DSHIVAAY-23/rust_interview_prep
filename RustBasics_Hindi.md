@@ -341,51 +341,12 @@ fn main() {
     let result = longest(&string1, &string2);
     println!("Longest string: {}", result);
 }
-##expalnation
-### Step-by-Step Explanation:
 
-1. **`longest<'a>`**:
-   - Function `longest` me `<'a>` lifetime parameter use kiya gaya hai. Ye lifetime parameter Rust ko batata hai ki jo references function ko diye jayenge, unka lifetime `a` ke equal ya usse zyada hona chahiye.
-
-2. **`s1: &'a str` aur `s2: &'a str`**:
-   - Dono arguments ka lifetime `'a` hai, jo indicate karta hai ki `s1` aur `s2` dono references unhi memory locations ko point karte hain, jinke lifetime `'a` ke andar hain.
-
-3. **Return Value**:
-   - Function `longest` bhi ek reference return karta hai jo `'a` lifetime ko respect karta hai. Matlab jo reference return hoga, wo unhi memory locations ko point karega jo `'a` lifetime ke under hain.
-
-4. **`result = longest(&string1, &string2);`**:
-   - `longest` function ko call karte waqt, `string1` aur `string2` ke references pass kiye ja rahe hain. Rust ye ensure karega ki return value valid rahe, aur dono input references valid memory locations ko point kar rahe hain.
-
-### Lifetimes ki zarurat kyon hai?
-
-Rust me ownership aur borrowing ka concept aise design kiya gaya hai ki tumhare code me **memory leaks** aur **invalid references** ka chance zero ho. Lifetimes ka use karne se Rust ensure karta hai ki tumhare references kab tak valid hain aur ye memory safety ko enforce karta hai.
-
-#### Key Points:
-
-1. **Compile-time Safety**:
-   Lifetimes ka main goal compile-time pe references ki validity ko check karna hai. Rust tumhe warning ya error dega agar koi reference invalid memory ko point kare.
-
-2. **Explicit Lifetimes**:
-   Jab tum function me references pass karte ho ya struct me references store karte ho, to tumhe lifetimes ko explicitly define karna padta hai, jisse Rust ko pata chale ki references ka lifespan kya hoga.
-
-3. **Borrowing and Ownership Rules**:
-   Lifetimes borrowing aur ownership rules ko enforce karte hain. Tumhare code me **dangling references** (jo invalid memory ko point karte hain) ka koi chance nahi hota, kyunki Rust ye ensure karta hai ki references unke valid scope ke andar hi rahe.
-
-### Conclusion:
-
-Rust me **lifetimes** ek ahem concept hai jo memory safety ko ensure karta hai. Ye references ki validity ko manage karte hain aur ye guarantee karte hain ki tumhare program me **dangling references** ya **invalid memory access** na ho. Lifetimes, ownership aur borrowing ke saath milke Rust ko ek powerful aur safe language banate hain.
-
-
----
-
-**Example:**  
-```rust
-fn main() {
-    let mut name = String::from("Amit"); // String type
-    name.push_str(" Kumar"); // Modify allowed
-    println!("Name is: {}", name); // Output: Amit Kumar
-}
-```
+Explanation:
+Lifetime Parameter < 'a >:
+Specifies that the references passed to longest will live as long as 'a.
+Ensures Validity:
+Guarantees that the returned reference points to a memory location valid for 'a.
 
 ---
 
@@ -788,21 +749,57 @@ Yahan pe, dono `a` aur `b` `Rc` pointer ko share kar rahe hain. Jab dono referen
 #### **Example**:
 
 ```rust
-use std::sync::Arc;
+use std::rc::Rc;
 use std::thread;
+use std::sync::Arc;
+use std::cell::RefCell;
+
+
+struct Person {
+    name: String,
+    age: u32,
+}
 
 fn main() {
-    let a = Arc::new(5);  // Arc mein value store kiya
 
-    let a_clone = Arc::clone(&a);  // Arc ka clone banaya
+    // for Rc  
 
-    let handle = thread::spawn(move || {
-        println!("Value from thread: {}", a_clone);
+    /* let person1 = Rc::new(Person {
+        name: "Alice".to_string(),
+        age: 25,
+    });*/
+let  cave = Arc::new(Person {
+        name: "Alice".to_string(),
+        age: 25,
+    });
+let r1 = cave.clone();
+ let r2 = cave.clone();
+  
+ println!("the rc count is : {}",Arc::strong_count(&cave));
+
+    let thread1 = thread::spawn(move || {
+        println!("Thread 1: Name={}, Age={}", r1.name, r1.age);
+        // Simulate some work being done in thread 1
+        thread::sleep_ms(1000);
     });
 
-    handle.join().unwrap();  // Wait for thread to finish
+    let thread2 = thread::spawn(move || {
+        println!("Thread 2: Name={}, Age={}", r2.name,r2.age);
+        // Simulate some work being done in thread 2
+        thread::sleep_ms(1000);
+    });
 
-    println!("Value from main: {}", a);
+    thread1.join().unwrap();
+    thread2.join().unwrap();
+
+    println!("Reference Count: {}", Arc::strong_count(&cave));
+    
+    let head = RefCell::new(32);
+    *head.borrow_mut() += 1;
+     println!("{}", *head.borrow());
+
+    
+    
 }
 ```
 

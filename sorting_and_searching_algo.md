@@ -121,18 +121,6 @@ This repository provides a collection of sorting and searching algorithms implem
 
 ```
 
-# Sorting and Searching Algorithms
-
-This repository provides a collection of sorting and searching algorithms implemented in Rust, along with explanations and code examples.
-
----
-
-## Sorting Algorithms
-
-Sorting algorithms are techniques used to arrange elements in a defined order, generally **ascending** or **descending**.
-
-### Common Sorting Algorithms:
-
 4. **Bubble Sort**
    - **Explanation**: Compares adjacent elements and swaps them until the array is sorted.
    - **Time Complexity**: O(n²) (worst case), O(n) (best case for optimized version).

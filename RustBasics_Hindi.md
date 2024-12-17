@@ -431,7 +431,7 @@ fn main() {
 Yahan pe, `5` ko heap par store kiya gaya hai. `Box` ke through hum us value ko access kar pa rahe hain.
 
 ### **Deref and Drop**:
-
+```rust
 use std::ops::Deref;
 
 // Define a custom smart pointer MyBox
@@ -463,7 +463,7 @@ fn main() {
     // MyBox will automatically drop here
     println!("MyBox is about to go out of scope...");
 }
-
+```
 
 ### **2. Rc<T>**
 `Rc<T>` ka full form hai **Reference Counting**. Ye ek **non-thread-safe smart pointer** hai jo multiple owners ke beech ownership share karta hai. `Rc` ka use tab hota hai jab hume ek data ka **multiple references** chahiye ho.

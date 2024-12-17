@@ -1,15 +1,7 @@
-# Sorting and Searching Algorithms
-
-This repository provides a collection of sorting and searching algorithms implemented in Rust, along with explanations and code examples.
-
----
 
 ## Sorting Algorithms
 
 Sorting algorithms are techniques used to arrange elements in a defined order, generally **ascending** or **descending**.
-
-### Common Sorting Algorithms:
-
 1. **Merge Sort**
    - **Explanation**: A divide-and-conquer algorithm that recursively divides the array and merges the sorted halves..
    - **Time Complexity**: O(n log n) (all cases)..
@@ -64,10 +56,6 @@ fn main() {
 }
 
 ```
-# Sorting and Searching Algorithms
-
-This repository provides a collection of sorting and searching algorithms implemented in Rust, along with explanations and code examples.
-
 ---
 
 2. **Selection Sort**

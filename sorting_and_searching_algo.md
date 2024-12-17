@@ -13,9 +13,9 @@ Sorting algorithms are techniques used to arrange elements in a defined order, g
 1. **Merge Sort**
    - **Explanation**: A divide-and-conquer algorithm that recursively divides the array and merges the sorted halves..
    - **Time Complexity**: O(n log n) (all cases)..
-   - 
-   ```rust
- fn merge(arr: &mut Vec<i32>, low: usize, mid: usize, high: usize) {
+
+```rust
+    fn merge(arr: &mut Vec<i32>, low: usize, mid: usize, high: usize) {
     let mut temp: Vec<i32> = Vec::new();
     let mut left = low;
     let mut right = mid + 1;
@@ -71,7 +71,7 @@ This repository provides a collection of sorting and searching algorithms implem
 ---
 
 2. **Selection Sort**
-   ```rust
+ ```rust
  fn selection_sort(arr: &mut Vec<i32>) {
     let n = arr.len();
     for i in 0..n - 1 {
@@ -85,21 +85,21 @@ This repository provides a collection of sorting and searching algorithms implem
             arr.swap(i, min_idx);
         }
     }
-}
+    }
 
-fn main() {
+ fn main() {
     let mut arr = vec![64, 25, 12, 22, 11];
     println!("Before Sorting: {:?}", arr);
     selection_sort(&mut arr);
     println!("After Sorting: {:?}", arr);
-}
+  }
 
 ```
 
 3. **Insertion Sort**
   - **Explanation:** A divide-and-conquer algorithm that recursively divides the array and merges the sorted halves.
-   ```rust
- fn insertion_sort(arr: &mut Vec<i32>) {
+ ```rust
+  fn insertion_sort(arr: &mut Vec<i32>) {
     let n = arr.len();
     for i in 1..n {
         let key = arr[i];
@@ -110,14 +110,14 @@ fn main() {
         }
         arr[j] = key;
     }
-}
+ }
 
-fn main() {
+ fn main() {
     let mut arr = vec![12, 11, 13, 5, 6];
     println!("Before Sorting: {:?}", arr);
     insertion_sort(&mut arr);
     println!("After Sorting: {:?}", arr);
-}
+ }
 
 ```
 
@@ -133,40 +133,11 @@ Sorting algorithms are techniques used to arrange elements in a defined order, g
 
 ### Common Sorting Algorithms:
 
-1. **Bubble Sort**
-   - **Explanation**: Compares adjacent elements and swaps them until the array is sorted.
-   - **Time Complexity**: O(n²) (worst case), O(n) (best case for optimized version).
-
-   ```rust
-   fn bubble_sort(arr: &mut Vec<i32>) {
-       let n = arr.len();
-       for i in 0..n - 1 {
-           let mut swapped = false;
-           for j in 0..n - i - 1 {
-               if arr[j] > arr[j + 1] {
-                   arr.swap(j, j + 1);
-                   swapped = true;
-               }
-           }
-           if !swapped {
-               break;
-           }
-       }
-   }
-
-   fn main() {
-       let mut arr = vec![64, 34, 25, 12, 22, 11, 90];
-       println!("Before Sorting: {:?}", arr);
-       bubble_sort(&mut arr);
-       println!("After Sorting: {:?}", arr);
-   }
-```
-
 4. **Bubble Sort**
    - **Explanation**: Compares adjacent elements and swaps them until the array is sorted.
    - **Time Complexity**: O(n²) (worst case), O(n) (best case for optimized version).
 
-   ```rust
+```rust
    fn bubble_sort(arr: &mut Vec<i32>) {
        let n = arr.len();
        for i in 0..n - 1 {
@@ -190,6 +161,8 @@ Sorting algorithms are techniques used to arrange elements in a defined order, g
        println!("After Sorting: {:?}", arr);
    }
 ```
+
+
 ***Binary search***
 
 1. **Binary search**

@@ -13,7 +13,7 @@ Sorting algorithms are techniques used to arrange elements in a defined order, g
 1. **Merge Sort**
    - **Explanation**: A divide-and-conquer algorithm that recursively divides the array and merges the sorted halves..
    - **Time Complexity**: O(n log n) (all cases)..
-
+   - 
    ```rust
  fn merge(arr: &mut Vec<i32>, low: usize, mid: usize, high: usize) {
     let mut temp: Vec<i32> = Vec::new();
@@ -197,7 +197,7 @@ Sorting algorithms are techniques used to arrange elements in a defined order, g
    - **Time Complexity**: O(n²) (worst case), O(n) (best case for optimized version).
 
    ```rust
-fn binary_search(arr: &[i32], target: i32) -> Option<usize> {
+   fn binary_search(arr: &[i32], target: i32) -> Option<usize> {
     let mut low = 0;
     let mut high = arr.len();
 
@@ -215,7 +215,7 @@ fn binary_search(arr: &[i32], target: i32) -> Option<usize> {
     None
 }
 
-fn lower_bound(arr: &[i32], target: i32) -> usize {
+    fn lower_bound(arr: &[i32], target: i32) -> usize {
     let mut low = 0;
     let mut high = arr.len();
 
@@ -231,7 +231,7 @@ fn lower_bound(arr: &[i32], target: i32) -> usize {
     low
 }
 
-fn upper_bound(arr: &[i32], target: i32) -> usize {
+    fn upper_bound(arr: &[i32], target: i32) -> usize {
     let mut low = 0;
     let mut high = arr.len();
 
@@ -247,11 +247,11 @@ fn upper_bound(arr: &[i32], target: i32) -> usize {
     low
 }
 
-fn main() {
-    let arr = vec![1, 3, 5, 5, 5, 7, 9];
-    let target = 5;
+     fn main() {
+     let arr = vec![1, 3, 5, 5, 5, 7, 9];
+     let target = 5;
 
-    match binary_search(&arr, target) {
+     match binary_search(&arr, target) {
         Some(index) => println!("Found {} at index {}", target, index),
         None => println!("{} not found in the array", target),
     }

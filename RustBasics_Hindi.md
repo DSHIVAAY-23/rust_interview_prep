@@ -430,11 +430,40 @@ fn main() {
 
 Yahan pe, `5` ko heap par store kiya gaya hai. `Box` ke through hum us value ko access kar pa rahe hain.
 
-#### **Important Points**:
-- `Box<T>` ek single owner hota hai.
-- Jaise hi `Box` ka scope end hota hai, heap memory automatically deallocate ho jaati hai.
+### **Deref and Drop**:
 
----
+use std::ops::Deref;
+
+// Define a custom smart pointer MyBox
+struct MyBox<T>(T);
+
+// Implement Deref trait for MyBox
+impl<T> Deref for MyBox<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0 // Allows dereferencing to access the inner value
+    }
+}
+
+// Implement Drop trait for MyBox
+impl<T> Drop for MyBox<T> {
+    fn drop(&mut self) {
+        println!("Dropping MyBox with value!");
+    }
+}
+
+fn main() {
+    // Using MyBox to hold a value
+    let x = MyBox(42);
+
+    // Accessing the inner value using dereference operator (*)
+    println!("The value inside MyBox is: {}", *x);
+
+    // MyBox will automatically drop here
+    println!("MyBox is about to go out of scope...");
+}
+
 
 ### **2. Rc<T>**
 `Rc<T>` ka full form hai **Reference Counting**. Ye ek **non-thread-safe smart pointer** hai jo multiple owners ke beech ownership share karta hai. `Rc` ka use tab hota hai jab hume ek data ka **multiple references** chahiye ho.

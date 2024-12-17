@@ -8,111 +8,88 @@ Sorting algorithms wo techniques hain jo elements ko kisi defined order mein arr
 1. **Bubble Sort**:
    - Explanation: Adjacent elements ko compare karke swap karte hain jab tak array sorted na ho jaye.
    - Time Complexity: O(n²) in worst case, O(n) in best case (optimized version).
-     #include <iostream>
-#include <vector>
-using namespace std;
-
-void bubbleSort(vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        bool swapped = false; // Optimization to stop if array is already sorted
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                swap(arr[j], arr[j + 1]);
+     ```rust
+fn bubble_sort(arr: &mut Vec<i32>) {
+    let n = arr.len();
+    for i in 0..n - 1 {
+        let mut swapped = false; // Optimization to stop if array is already sorted
+        for j in 0..n - i - 1 {
+            if arr[j] > arr[j + 1] {
+                arr.swap(j, j + 1);
                 swapped = true;
             }
         }
-        if (!swapped) break; // No swaps means array is already sorted
+        if !swapped {
+            break; // No swaps means array is already sorted
+        }
     }
 }
 
-int main() {
-    vector<int> arr = {64, 34, 25, 12, 22, 11, 90};
-    cout << "Before Sorting: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
+fn main() {
+    let mut arr = vec![64, 34, 25, 12, 22, 11, 90];
+    println!("Before Sorting: {:?}", arr);
 
-    bubbleSort(arr);
+    bubble_sort(&mut arr);
 
-    cout << "After Sorting: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
-    return 0;
+    println!("After Sorting: {:?}", arr);
 }
-
+```
 
 2. **Selection Sort**:
    - Explanation: Har pass mein minimum element ko select karke usse first unsorted position pe swap karte hain.
    - Time Complexity: O(n²) in all cases.
-     #include <iostream>
-#include <vector>
-using namespace std;
-
-void selectionSort(vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        int minIdx = i;
-        for (int j = i + 1; j < n; j++) {
-            if (arr[j] < arr[minIdx]) {
-                minIdx = j;
+ ```rust
+     fn selection_sort(arr: &mut Vec<i32>) {
+    let n = arr.len();
+    for i in 0..n - 1 {
+        let mut min_idx = i;
+        for j in i + 1..n {
+            if arr[j] < arr[min_idx] {
+                min_idx = j;
             }
         }
-        if (minIdx != i) {
-            swap(arr[i], arr[minIdx]);
+        if min_idx != i {
+            arr.swap(i, min_idx);
         }
     }
 }
 
-int main() {
-    vector<int> arr = {64, 25, 12, 22, 11};
-    cout << "Before Sorting: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
+fn main() {
+    let mut arr = vec![64, 25, 12, 22, 11];
+    println!("Before Sorting: {:?}", arr);
 
-    selectionSort(arr);
+    selection_sort(&mut arr);
 
-    cout << "After Sorting: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
-    return 0;
+    println!("After Sorting: {:?}", arr);
 }
-
+```
 
 3. **Insertion Sort**:
    - Explanation: Array ke elements ko ek ek karke sorted portion mein insert karte hain.
    - Time Complexity: O(n²) in worst case, O(n) in best case.
-  #include <iostream>
-#include <vector>
-using namespace std;
-
-void insertionSort(vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 1; i < n; i++) {
-        int key = arr[i];
-        int j = i - 1;
-
-        // Move elements of arr[0..i-1] that are greater than key
-        while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j--;
+```rust
+fn insertion_sort(arr: &mut Vec<i32>) {
+    let n = arr.len();
+    for i in 1..n {
+        let key = arr[i];
+        let mut j = i;
+        while j > 0 && arr[j - 1] > key {
+            arr[j] = arr[j - 1];
+            j -= 1;
         }
-        arr[j + 1] = key;
+        arr[j] = key;
     }
 }
 
-int main() {
-    vector<int> arr = {12, 11, 13, 5, 6};
-    cout << "Before Sorting: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
+fn main() {
+    let mut arr = vec![12, 11, 13, 5, 6];
+    println!("Before Sorting: {:?}", arr);
 
-    insertionSort(arr);
+    insertion_sort(&mut arr);
 
-    cout << "After Sorting: ";
-    for (int x : arr) cout << x << " ";
-    cout << endl;
-    return 0;
+    println!("After Sorting: {:?}", arr);
 }
+```
 
 
 4. **Merge Sort**:

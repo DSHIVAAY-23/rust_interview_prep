@@ -55,8 +55,30 @@ impl Shape for Circle {
     }
 }
 
-let c = Circle { radius: 5.0 };
-println!("Circle area: {}", c.area());
+pub struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Shape for Rectangle {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+}
+
+fn print_area(shape: &dyn Shape) {
+    println!("Area: {}", shape.area());
+}
+
+fn main() {
+    let circle = Circle { radius: 5.0 };
+    let rectangle = Rectangle { width: 4.0, height: 6.0 };
+
+    // Using polymorphism to call the `area` method
+    print_area(&circle);
+    print_area(&rectangle);
+}
+
 ```
 
 ---

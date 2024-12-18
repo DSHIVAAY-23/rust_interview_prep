@@ -6,7 +6,7 @@ Rust mein string ko reverse karne ka program kuch is tarah likha ja sakta hai:
 fn reverse_string(s: &str) -> String {
     s.chars().rev().collect()
 }
-
+```
 
 
 ### Longest String in an array:

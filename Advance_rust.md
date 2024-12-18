@@ -49,3 +49,61 @@ fn main() {
         println!("The area is: {}", shape.area());
     }
 }
+#Trait bound
+```rust
+use std::fmt::Display;
+
+struct Pair<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Pair<T> {
+    fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is x = {}", self.x);
+        } else {
+            println!("The largest member is y = {}", self.y);
+        }
+    }
+}
+```
+3. Supertraits
+A trait can depend on other traits, requiring implementors to also implement the supertraits.
+
+### Example: Using Supertraits
+```rust
+trait Display {
+    fn show(&self);
+}
+
+trait Debug: Display {
+    fn debug(&self);
+}
+
+struct Point;
+
+impl Display for Point {
+    fn show(&self) {
+        println!("Displaying Point");
+    }
+}
+
+impl Debug for Point {
+    fn debug(&self) {
+        self.show(); // Access method from the supertrait
+        println!("Debugging Point");
+    }
+}
+
+fn main() {
+    let point = Point;
+    point.debug();
+}
+```

@@ -7,15 +7,7 @@ fn reverse_string(s: &str) -> String {
     s.chars().rev().collect()
 }
 
-fn main() {
-    let input = "hello";
-    let reversed = reverse_string(input);
-    println!("Reversed string: {}", reversed);
-}
-```
----
-```
----
+
 
 ### Longest String in an array:
 
@@ -30,28 +22,7 @@ fn longest_string(strings: &[&str]) -> &str {
     longest
 }
 
-fn main() {
-    let arr = ["apple", "banana", "cherry", "kiwi"];
-    let result = longest_string(&arr);
-    println!("Longest string: {}", result);
-}
-```
 ---
----
-
-Agar aapko `max_by_key` ka use karke longest string find karni ho toh aap yeh program likh sakte hain:
-
-```rust
-fn main() {
-    let arr = ["apple", "banana", "cherry", "kiwi"];
-    let longest = arr.iter().max_by_key(|s| s.len()).unwrap();
-    println!("Longest string: {}", longest);
-}
-```
-
-``` 
-
-```
 
 ---
 

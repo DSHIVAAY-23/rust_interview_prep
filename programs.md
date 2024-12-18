@@ -24,11 +24,9 @@ fn longest_string(strings: &[&str]) -> &str {
 
 ---
 
----
+
 
 ### **Fibonacci series in Rust**
-
-Rust mein Fibonacci series ka program kuch is tarah se likha ja sakta hai:
 
 ### Recursive Approach:
 Agar aap recursive approach ka use karna chahein toh kuch is tarah se likh sakte hain:
@@ -77,6 +75,8 @@ fn main() {
 
 ```rust
 fn is_palindrome(s: &str) -> bool {
+   // let lower_s = s.to_lowercase(); // Convert the string to lowercase Naman
+
     let rev: String = s.chars().rev().collect();
     s == rev
 }
@@ -94,23 +94,3 @@ fn main(){
 
 ---
 
-
-### **Case-Insensitive Palindrome Code**
-
-```rust
-fn is_palindrome(s: &str) -> bool {
-    let lower_s = s.to_lowercase(); // Convert the string to lowercase
-    let rev: String = lower_s.chars().rev().collect(); // Reverse the lowercase string
-    lower_s == rev // Compare original (lowercase) with reversed
-}
-
-fn main() {
-    let data = "Naman"; // Example with mixed case
-    if is_palindrome(data) {
-        println!("{} is a palindrome", data);
-    } else {
-        println!("{} is not a palindrome", data);
-    }
-}
-```
-----

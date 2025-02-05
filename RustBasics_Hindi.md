@@ -26,10 +26,10 @@ fn main() {
 }
 ```
 
-### Example 3: Dangling References
+### Example 3: Dangling References  -- A dangling reference (or dangling pointer) is a reference to a memory location that has already been freed. In Rust, this is prevented through ownership and borrowing rules.
 ```rust
 fn main() {
-    let r;
+    let r;   // correct code i.e let r =  {data}
     {
         let data = String::from("Hello");
         r = &data; // Error: `data` goes out of scope
@@ -334,7 +334,6 @@ fn main() {
 Thread 1 locks lock1, then waits for lock2.
 Thread 2 locks lock2, then waits for lock1.
 ❌ Deadlock! Both threads wait forever, blocking each other.
-🔹 5. Preventing Deadlocks
 ✅ Solution 1: Always Lock in the Same Order
 Modify the code so that all threads lock in the same order:
 
@@ -352,6 +351,94 @@ if let Ok(mut data) = lock1.try_lock() {
 If try_lock() fails, it won’t block and can retry later.
 
 ---
+### What Are Macros in Rust?
+In Rust, macros are a way to write code that generates code. They allow for metaprogramming, enabling developers to:
 
+## Types of Macros in Rust
+Rust provides four main types of macros:
 
+1.Declarative Macros (macro_rules!) -- Declarative macros use the macro_rules! syntax and work similarly to match expressions. They are useful for defining reusable patterns.
+```rust
 
+macro_rules! my_vec {
+    ( $( $x:expr ),* ) => {
+        {
+            let mut temp_vec = Vec::new();
+            $(
+                temp_vec.push($x);
+            )*
+            temp_vec
+        }
+    };
+}
+
+fn main() {
+    let numbers = my_vec![1, 2, 3, 4, 5];
+    println!("{:?}", numbers); // Output: [1, 2, 3, 4, 5]
+}
+```
+
+How It Works?
+$( $x:expr ),* → Captures any number of expressions (1, 2, 3, ...).
+temp_vec.push($x); → Expands each captured value inside a loop.
+Result → A new Vec<T> is created at compile-time.
+
+2.Procedural Macros -- Procedural macros are more powerful than declarative macros. They take Rust code as input, process it, and generate new code.
+Function-like Macros (#[proc_macro])
+```rust
+
+use proc_macro;
+
+#[proc_macro]
+pub fn uppercase(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let input_str = input.to_string().to_uppercase(); 
+    format!("{}", input_str).parse().unwrap()
+}
+```
+🔥 How It Works?
+Takes Rust tokens as input (proc_macro::TokenStream).
+Transforms them (e.g., converts to uppercase).
+Returns modified Rust code.
+
+Attribute Macros (#[proc_macro_attribute])
+```rust
+
+use proc_macro::TokenStream;
+
+#[proc_macro_attribute]
+
+pub fn log_execution(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = item.to_string();
+    let output = format!(
+        "{{ println!(\"Executing function: {}\", \"{}\"); {} }}",
+        input, input
+    );
+    output.parse().unwrap()
+}
+
+```
+
+Derive Macros (#[proc_macro_derive])
+
+✅ Example: Implementing a Hello Trait Automatically
+```rust
+
+use proc_macro::TokenStream;
+
+#[proc_macro_derive(Hello)]
+pub fn hello_macro_derive(_input: TokenStream) -> TokenStream {
+    let output = "impl Hello for MyStruct { fn hello() { println!(\"Hello, world!\"); } }";
+    output.parse().unwrap()
+}
+```
+
+🔥 Usage:
+```rust
+
+#[derive(Hello)]
+struct MyStruct;
+
+fn main() {
+    MyStruct::hello(); // Output: Hello, world!
+}
+```

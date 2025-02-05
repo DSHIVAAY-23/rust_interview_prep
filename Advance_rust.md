@@ -51,7 +51,7 @@ fn main() {
 }
 ```
 
-### Trait bound
+### Trait bound -- Trait bounds specify constraints on generic types, ensuring they implement specific traits.
 
 ```rust
 use std::fmt::Display;

@@ -129,14 +129,14 @@ fn main() {
     let result = longest(&string1, &string2);
     println!("Longest string: {}", result);
 }
-
+```
 Explanation:
 Lifetime Parameter < 'a >:
 Specifies that the references passed to longest will live as long as 'a.
 Ensures Validity:
 Guarantees that the returned reference points to a memory location valid for 'a.
 
----
+
 ```
 ---
 ### **1. Box<T>**

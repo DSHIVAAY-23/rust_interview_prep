@@ -137,7 +137,7 @@ Ensures Validity:
 Guarantees that the returned reference points to a memory location valid for 'a.
 
 
-```
+
 
 ### **1. Box<T>**
 `Box<T>` ek heap-allocated smart pointer hai, jo ek value ko heap par store karta hai aur ek reference ke through us value ko manage karta hai.

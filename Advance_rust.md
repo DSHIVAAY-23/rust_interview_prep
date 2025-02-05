@@ -49,7 +49,10 @@ fn main() {
         println!("The area is: {}", shape.area());
     }
 }
-#Trait bound
+```
+
+### Trait bound
+
 ```rust
 use std::fmt::Display;
 

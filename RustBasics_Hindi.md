@@ -288,18 +288,68 @@ fn main() {
 }
 ```
 
-#### **Key Points:**
+###  4. Deadlocks in Mutex<T>
+A deadlock occurs when two threads wait for each other’s lock forever.
 
-1. **Mutex:**  
-   - Data ko ek time pe sirf ek thread access kar sake, iske liye `Mutex` ka use hota hai.  
-   - `lock()` function ko call karke data access karte ho, aur kaam hone ke baad Mutex unlock ho jata hai.
+❌ Example: Deadlock Scenario
+```rust
+use std::sync::{Arc, Mutex};
+use std::thread;
 
-2. **Arc:**  
-   - `Arc` ka matlab hai **Atomic Reference Counter**. Ye shared data ka ownership multiple threads me safely manage karta hai.  
+fn main() {
+    let lock1 = Arc::new(Mutex::new(1));
+    let lock2 = Arc::new(Mutex::new(2));
 
+    let l1 = Arc::clone(&lock1);
+    let l2 = Arc::clone(&lock2);
 
-### **Smart Pointers:**
-Rust mein **smart pointers** ek aise mechanism hote hain jo memory management ko efficiently handle karte hain, bina manual memory management (jaise C++ mein hota hai) ke. Rust mein 3 main types ke smart pointers hote hain: **Box**, **Rc**, aur **Arc**. Inka use karke hum easily memory leak aur dangling pointers se bach sakte hain.
+    let handle1 = thread::spawn(move || {
+        let _lock1 = l1.lock().unwrap();
+        println!("Thread 1: Acquired Lock 1");
+
+        std::thread::sleep(std::time::Duration::from_secs(1)); 
+
+        let _lock2 = l2.lock().unwrap(); // Waiting for Lock 2
+        println!("Thread 1: Acquired Lock 2");
+    });
+
+    let l1 = Arc::clone(&lock1);
+    let l2 = Arc::clone(&lock2);
+
+    let handle2 = thread::spawn(move || {
+        let _lock2 = l2.lock().unwrap();
+        println!("Thread 2: Acquired Lock 2");
+
+        std::thread::sleep(std::time::Duration::from_secs(1));
+
+        let _lock1 = l1.lock().unwrap(); // Waiting for Lock 1
+        println!("Thread 2: Acquired Lock 1");
+    });
+
+    handle1.join().unwrap();
+    handle2.join().unwrap();
+}
+```
+### 🔥 What Happens?
+Thread 1 locks lock1, then waits for lock2.
+Thread 2 locks lock2, then waits for lock1.
+❌ Deadlock! Both threads wait forever, blocking each other.
+🔹 5. Preventing Deadlocks
+✅ Solution 1: Always Lock in the Same Order
+Modify the code so that all threads lock in the same order:
+
+```rust
+let _lock1 = lock1.lock().unwrap();
+let _lock2 = lock2.lock().unwrap();
+✅ Solution 2: Use try_lock() to Avoid Blocking
+Instead of lock(), use try_lock():
+```
+```rust
+if let Ok(mut data) = lock1.try_lock() {
+    *data += 1;
+}
+```
+If try_lock() fails, it won’t block and can retry later.
 
 ---
 

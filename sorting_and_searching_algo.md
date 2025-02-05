@@ -162,7 +162,7 @@ fn main() {
     }
 
     None
-}
+   }
 
     fn lower_bound(arr: &[i32], target: i32) -> usize {
     let mut low = 0;
@@ -178,7 +178,7 @@ fn main() {
     }
 
     low
-}
+  }
 
     fn upper_bound(arr: &[i32], target: i32) -> usize {
     let mut low = 0;
@@ -194,7 +194,7 @@ fn main() {
     }
 
     low
-}
+   }
 
      fn main() {
      let arr = vec![1, 3, 5, 5, 5, 7, 9];
@@ -210,7 +210,7 @@ fn main() {
 
     let ub = upper_bound(&arr, target);
     println!("Upper bound of {} is at index {}", target, ub);
-}
+  }
 
 ```
 

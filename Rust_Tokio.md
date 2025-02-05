@@ -1,21 +1,31 @@
 
 ### **Tokio:**
-**Tokio** ek asynchronous runtime hai Rust programming language ke liye jo concurrency aur parallelism handle karne ke liye use hota hai. Yeh Rust ke async/await syntax ko implement karta hai aur aapko asynchronous programming mein madad karta hai, jisme aap parallel tasks ko efficiently execute kar sakte ho bina threads ke over-head ke.
+**Tokio** Tokio is an asynchronous runtime for the Rust programming language that is used to handle concurrency and parallelism. It implements Rust's async/await syntax and helps you write asynchronous programs, allowing you to execute multiple tasks efficiently without excessive thread overhead.
 
-Chalo, ab thoda aur detail mein samajhte hain ki **Tokio** kya hai aur yeh kaise kaam karta hai.
+Let’s understand in more detail what Tokio is and how it works.
 
 
 ### **Key Features of Tokio:**
 
-1. **Concurrency and Parallelism:**
-   
-2. **Async IO:**
+Key Features of Tokio:
 
-3. **Futures and Streams:**
-   - Tokio ka use karte waqt aapko **`Future`** aur **`Stream`** types ka use karna padta hai, jo asynchronous operations ko represent karte hain.
-   - **`Future`** ek value ko represent karta hai jo future mein available hoga.
-   - **`Stream`** ek sequence of values ko represent karta hai jo time ke saath aayenge.
-4. **Multithreading Support:**
+1. Concurrency and Parallelism:
+
+Tokio enables concurrent execution of multiple tasks using async/await, making it efficient for high-performance applications.
+
+2. Async IO:
+
+Tokio provides non-blocking Input/Output operations, which means you can handle multiple tasks simultaneously without blocking the main thread.
+
+3. Futures and Streams:
+
+When working with Tokio, you need to use Future and Stream types, which represent asynchronous operations.
+Future represents a value that will be available at some point in the future.
+Stream represents a sequence of values that arrive over time.
+
+4.Multithreading Support:
+
+Tokio allows tasks to run on multiple threads, improving efficiency for large-scale applications.
 
 ---
 
@@ -63,9 +73,9 @@ async fn main() {
 
 
 ### **6. Async/Await ka Flow:**
-1. Jab ek asynchronous function call hota hai, toh wo turant execute nahi hota. Rust isse ek **Future** object ke roop mein treat karta hai.
-2. **`await`** jab function par lagta hai, toh Rust wait karta hai jab tak wo **Future** complete nahi ho jaata.
-3. Jab **Future** complete hota hai, tab hum **`await`** ke baad ka code execute karte hain.
+When an asynchronous function is called, it does not execute immediately. Instead, Rust treats it as a Future object.
+The await keyword makes Rust pause execution until the Future is completed.
+Once the Future is resolved, the code following await continues execution.
 
 ---
 

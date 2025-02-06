@@ -55,9 +55,9 @@ use std::cell::RefCell;
 
 fn main(){
  let a: RefCell<i32> = RefCell::new(14);
- *a.borrow_mut() += 1;
+ *a.borrow_mut() += 1;     //  *&mut a += 1;
 
- println!("{}", *a.borrow());
+ println!("{}", *a.borrow());   //  println!("{}", a);
 }
 ```
 

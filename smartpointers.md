@@ -166,24 +166,29 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 
 fn main() {
-    let counter = Arc::new(Mutex::new(0)); // Shared counter with Mutex
-    let mut handles = vec![];
+    let counter = Arc::new(Mutex::new(0));
 
-    for _ in 0..10 {
-        let counter = Arc::clone(&counter);
-        let handle = thread::spawn(move || {
-            let mut num = counter.lock().unwrap(); // Lock the Mutex
-            *num += 1;
-        });
-        handles.push(handle);
-    }
+    let counter_clone_inc = Arc::clone(&counter);
+    let counter_clone_dec = Arc::clone(&counter);
 
-    for handle in handles {
-        handle.join().unwrap(); // Wait for all threads to finish
-    }
+    let handle_inc = thread::spawn(move || {
+        let mut num = counter_clone_inc.lock().unwrap();
+        *num += 1;
+        println!("Incremented: {}", *num);
+    });
 
-    println!("Result: {}", *counter.lock().unwrap());
+    let handle_dec = thread::spawn(move || {
+        let mut num = counter_clone_dec.lock().unwrap();
+        *num -= 1;
+        println!("Decremented: {}", *num);
+    });
+
+    handle_inc.join().unwrap();
+    handle_dec.join().unwrap();
+
+    println!("Final value: {}", *counter.lock().unwrap());
 }
+
 ```
 
 ###  4. Deadlocks in Mutex<T>
@@ -249,3 +254,46 @@ if let Ok(mut data) = lock1.try_lock() {
 If try_lock() fails, it won’t block and can retry later.
 
 ---
+
+### Channels inc and dec
+
+You can use Rust’s mpsc (multi-producer, single-consumer) channels to achieve this by having one thread send increment commands and another send decrement commands to a main thread that processes them
+```rust
+
+use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+    
+    let tx_inc = tx.clone();
+    
+    let handle_inc = thread::spawn(move || {
+        for _ in 0..10 {
+            tx_inc.send(1).unwrap(); // Send increment signal
+            thread::sleep(Duration::from_millis(50));
+        }
+    });
+
+    let handle_dec = thread::spawn(move || {
+        for _ in 0..10 {
+            tx.send(-1).unwrap(); // Send decrement signal
+            thread::sleep(Duration::from_millis(50));
+        }
+    });
+
+    let mut counter = 0;
+    
+    for received in rx.iter().take(20) {
+        counter += received;
+        println!("Counter: {}", counter);
+    }
+
+    handle_inc.join().unwrap();
+    handle_dec.join().unwrap();
+
+    println!("Final value: {}", counter);
+}
+```
+

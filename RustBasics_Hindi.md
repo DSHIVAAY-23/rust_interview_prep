@@ -26,6 +26,17 @@ fn main() {
 }
 ```
 
+### Example2 -- refrence rule
+```rust
+    let mut s = String::from("hello");
+
+    let r1 = &mut s;
+    let r2 = &mut s;
+
+    println!("{}, {}", r1, r2);
+```
+
+
 ### Example 3: Dangling References  -- A dangling reference (or dangling pointer) is a reference to a memory location that has already been freed. In Rust, this is prevented through ownership and borrowing rules.
 ```rust
 fn main() {

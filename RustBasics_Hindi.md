@@ -176,10 +176,29 @@ fn main() {
 }
 ```
 
-How It Works?
+### How It Works?
 $( $x:expr ),* → Captures any number of expressions (1, 2, 3, ...).
 temp_vec.push($x); → Expands each captured value inside a loop.
 Result → A new Vec<T> is created at compile-time.
+
+### Custom my_println! Macro
+```rust
+
+macro_rules! my_println {
+    ( $( $arg:tt )* ) => {
+        {
+            print!("{}",""); // Ensures output is properly flushed
+            println!($($arg)*);
+        }
+    };
+}
+
+fn main() {
+    my_println!("Hello, Rust!");
+    my_println!("Number: {}", 42);
+    my_println!("Coordinates: ({}, {})", 10, 20);
+}
+```
 
 2.Procedural Macros -- Procedural macros are more powerful than declarative macros. They take Rust code as input, process it, and generate new code.
 Function-like Macros (#[proc_macro])

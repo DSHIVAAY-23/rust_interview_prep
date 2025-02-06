@@ -125,11 +125,13 @@ Lifetimes in Rust are used to manage the validity of references, ensuring memory
 
 ## Example: Lifetimes in Functions
 ```rust
+// 🚀 Function to return the longest of two string slices
+// `'a` is a generic lifetime that ensures both `s1` and `s2` have the same lifetime.
 fn longest<'a>(s1: &'a str, s2: &'a str) -> &'a str {
     if s1.len() > s2.len() {
-        s1
+        s1  // Returns `s1`, which must live at least as long as `'a`
     } else {
-        s2
+        s2  // Returns `s2`, ensuring its lifetime matches `'a`
     }
 }
 
@@ -137,9 +139,13 @@ fn main() {
     let string1 = String::from("Hello");
     let string2 = String::from("World");
     
+    // `string1` and `string2` are owned values, but we pass references to `longest`
     let result = longest(&string1, &string2);
+    
+    // ✅ Safe because `string1` and `string2` are still in scope
     println!("Longest string: {}", result);
 }
+
 ```
 Explanation:
 Lifetime Parameter < 'a >:

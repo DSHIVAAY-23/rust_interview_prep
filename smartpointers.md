@@ -1,4 +1,12 @@
 
+### 🚀 Can Two Threads Mutate at the Same Exact Time?
+
+No, because of Rust’s safety model:
+
+#### **Example**:
+With Mutex<T> → One thread locks, others wait.
+With Channels → One receiver processes one message at a time.
+
 
 ### **1. Box<T>**
 `Box<T>` ek heap-allocated smart pointer hai, jo ek value ko heap par store karta hai aur ek reference ke through us value ko manage karta hai.

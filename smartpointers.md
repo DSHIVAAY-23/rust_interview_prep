@@ -306,3 +306,33 @@ fn main() {
 }
 ```
 
+### 3️⃣ Using AtomicUsize (True Parallelism)
+```rust
+
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
+use std::thread;
+
+fn main() {
+    let shared_value = Arc::new(AtomicUsize::new(0));
+
+    let value_clone1 = Arc::clone(&shared_value);
+    let value_clone2 = Arc::clone(&shared_value);
+
+    let handle1 = thread::spawn(move || {
+        value_clone1.fetch_add(10, Ordering::SeqCst);
+        println!("Thread 1 incremented");
+    });
+
+    let handle2 = thread::spawn(move || {
+        value_clone2.fetch_add(20, Ordering::SeqCst);
+        println!("Thread 2 incremented");
+    });
+
+    handle1.join().unwrap();
+    handle2.join().unwrap();
+
+    println!("Final value: {}", shared_value.load(Ordering::SeqCst));
+}
+```
+

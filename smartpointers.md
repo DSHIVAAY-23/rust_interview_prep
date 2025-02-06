@@ -5,6 +5,7 @@ No, because of Rust’s safety model:
 
 #### **Example**:
 With Mutex<T> → One thread locks, others wait.
+
 With Channels → One receiver processes one message at a time.
 
 

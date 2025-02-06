@@ -1,3 +1,73 @@
+# Trait Objects and Trait bound in rust
+
+In Rust, we can use Trait Bounds for static dispatch and Trait Objects for dynamic dispatch.
+
+```rust
+
+// Define a trait `Speak`
+trait Speak {
+    fn speak(&self);
+}
+
+// Implement `Speak` for `Dog`
+struct Dog;
+impl Speak for Dog {
+    fn speak(&self) {
+        println!("Woof! Woof!");
+    }
+}
+
+// Implement `Speak` for `Cat`
+struct Cat;
+impl Speak for Cat {
+    fn speak(&self) {
+        println!("Meow! Meow!");
+    }
+}
+
+// 🚀 1️⃣ Static Dispatch using Trait Bound
+// The function is compiled separately for each type (faster, no runtime cost)
+fn static_speak<T: Speak>(animal: T) {
+    animal.speak(); // Statically determined at compile-time
+}
+
+// 🚀 2️⃣ Dynamic Dispatch using Trait Object
+// Uses `&dyn Speak`, meaning the function call is resolved at runtime
+fn dynamic_speak(animal: &dyn Speak) {
+    animal.speak(); // Dynamically determined at runtime (slower)
+}
+
+fn main() {
+    let dog = Dog;
+    let cat = Cat;
+
+    // ✅ Static Dispatch (Fast, Monomorphization)
+    static_speak(dog); // Generates a separate version of `static_speak` for Dog
+    
+    // ✅ Dynamic Dispatch (Flexible, Uses Virtual Table)
+    dynamic_speak(&cat); // Uses a vtable lookup for `speak`
+}
+
+```
+### Key Differences
+
+## 1. Static Dispatch (Compile-time):
+Uses generics with trait bounds (T: Trait).
+Monomorphization: The compiler generates a separate function for each type used.
+Faster, but increases binary size.
+
+## 2.Dynamic Dispatch (Runtime):
+
+Uses trait objects (&dyn Trait or Box<dyn Trait>).
+Uses Virtual Table (vtable) to look up methods at runtime.
+More flexible, but incurs runtime overhead.
+
+
+### When to Use Which?
+Use Static Dispatch if performance is a priority and you don't need heterogeneous types.
+Use Dynamic Dispatch if you need flexibility (e.g., storing different types in a collection).
+
+
 # Trait Objects in Rust
 
 This example demonstrates the use of trait objects in Rust for dynamic dispatch.

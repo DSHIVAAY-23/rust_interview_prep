@@ -154,6 +154,51 @@ Ensures Validity:
 Guarantees that the returned reference points to a memory location valid for 'a.
 
 
+### Closures and iterators
+```rust
+
+fn main() {
+    // ✅ Creating a vector of numbers
+    let numbers = vec![1, 2, 3, 4, 5];
+
+    // ✅ Using an iterator with `.map()` and a closure
+    // The closure takes each number `x`, multiplies it by 2, and collects the results into a new vector.
+    let doubled_numbers: Vec<i32> = numbers.iter().map(|x| x * 2).collect();
+
+    println!("Original numbers: {:?}", numbers);
+    println!("Doubled numbers: {:?}", doubled_numbers);
+
+    // ✅ Using an iterator with `.filter()` and a closure
+    // This filters out only the even numbers
+    let even_numbers: Vec<i32> = numbers.iter().filter(|&&x| x % 2 == 0).collect();
+
+    println!("Even numbers: {:?}", even_numbers);
+
+    // ✅ Defining a closure separately
+    let add_ten = |x: i32| x + 10; // Closure that adds 10 to a number
+
+    // Applying the closure to each element in an iterator
+    let incremented_numbers: Vec<i32> = numbers.iter().map(|&x| add_ten(x)).collect();
+
+    println!("Numbers + 10: {:?}", incremented_numbers);
+}
+```
+### Closures (|x| x * 2)
+
+A closure is an anonymous function that can capture variables from its surrounding scope.
+Example: |x| x * 2 is a closure that takes x, multiplies it by 2, and returns the result.
+
+### Iterators (.iter(), .map(), .filter())
+
+.iter() creates an immutable iterator over numbers.
+.map(|x| x * 2) applies the closure to each element and transforms it.
+.filter(|&&x| x % 2 == 0) keeps only even numbers.
+.collect() converts the iterator back into a Vec<i32>.
+Closures Stored in Variables
+
+let add_ten = |x: i32| x + 10; defines a closure that adds 10 to a number.
+We apply it using .map(|&x| add_ten(x)).
+
 
 ### What Are Macros in Rust?
 In Rust, macros are a way to write code that generates code. They allow for metaprogramming, enabling developers to:

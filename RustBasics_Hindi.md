@@ -1,40 +1,59 @@
-Ownership: A set of rules that governs how Rust manages memory; each value has a single owner, and the value is dropped when the owner goes out of scope.
+# Ownership: 
+A set of rules that governs how Rust manages memory; each value has a single owner, and the value is dropped when the owner goes out of scope.
 
-Borrowing: Accessing data without taking ownership. There are two types: immutable (&T) and mutable (&mut T) borrows.
+# Borrowing: 
+Accessing data without taking ownership. There are two types: immutable (&T) and mutable (&mut T) borrows.
 
-Reference: A pointer to a value without owning it. References allow borrowing (&T or &mut T).
+# Reference:
+A pointer to a value without owning it. References allow borrowing (&T or &mut T).
 
-Structs: Custom data types that let you group related data using named fields.
+# Structs: 
+Custom data types that let you group related data using named fields.
 
-Enum: A type that can be one of several defined variants. Useful for pattern matching and expressive error handling.
+# Enum: 
+A type that can be one of several defined variants. Useful for pattern matching and expressive error handling.
 
-Methods: Functions defined within an impl block associated with a struct or enum, often taking self as a parameter.
+# Methods: 
+Functions defined within an impl block associated with a struct or enum, often taking self as a parameter.
 
-Generics: Allow defining functions, structs, enums, or traits for multiple types without duplicating code.
+# Generics: 
+Allow defining functions, structs, enums, or traits for multiple types without duplicating code.
 
-Traits: Define shared behavior that types can implement (similar to interfaces in other languages).
+# Traits: 
+Define shared behavior that types can implement (similar to interfaces in other languages).
 
-Lifetimes: Annotate how long references are valid to ensure memory safety without a garbage collector.
+# Lifetimes: 
+Annotate how long references are valid to ensure memory safety without a garbage collector.
 
-Smart Pointers: Structs that behave like pointers but have additional metadata and capabilities (e.g., Box, Rc, RefCell).
+# Smart Pointers: 
+Structs that behave like pointers but have additional metadata and capabilities (e.g., Box, Rc, RefCell).
 
-Macro: Code that writes code—used for meta-programming. Comes in declarative (macro_rules!) and procedural forms.
+# Macro: 
+Code that writes code—used for meta-programming. Comes in declarative (macro_rules!) and procedural forms.
 
-Concurrency: Running multiple tasks in parallel using threads, async/await, or channels (std::thread, tokio, etc.).
+# Concurrency: 
+Running multiple tasks in parallel using threads, async/await, or channels (std::thread, tokio, etc.).
 
-Trait Object: A way to use traits dynamically via dyn Trait, enabling polymorphism at runtime.
+# Trait Object: 
+A way to use traits dynamically via dyn Trait, enabling polymorphism at runtime.
 
-Trait Bound: Constraints on generic types that require them to implement specific traits.
+# Trait Bound: 
+Constraints on generic types that require them to implement specific traits.
 
-Error Handling: Rust uses Result<T, E> and Option<T> for error and null-handling, along with ? operator.
+# Error 
+Handling: Rust uses Result<T, E> and Option<T> for error and null-handling, along with ? operator.
 
-Cargo: Rust’s build system and package manager. Handles dependencies, builds, and scripts.
+# cargo: 
+Rust’s build system and package manager. Handles dependencies, builds, and scripts.
 
-OOP: Rust supports OOP concepts like encapsulation and polymorphism using traits, structs, and impl blocks.
+# OOP: 
+Rust supports OOP concepts like encapsulation and polymorphism using traits, structs, and impl blocks.
 
-String: String is a growable, heap-allocated string type. &str is a string slice (borrowed string).
+# String: 
+String is a growable, heap-allocated string type. &str is a string slice (borrowed string).
 
-HashMap: A key-value collection type (std::collections::HashMap) implemented using hashing.
+# HashMap: 
+A key-value collection type (std::collections::HashMap) implemented using hashing.
 
 
 

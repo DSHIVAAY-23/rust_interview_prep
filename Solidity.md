@@ -52,31 +52,6 @@ contract TokenFactory {
 }
 ```
 
-## 5. Storage Packing
-
-```solidity
-// ❌ BAD: 3 slots
-uint256 a;  // Slot 0
-uint8 b;    // Slot 1
-address c;  // Slot 2
-
-// ✅ GOOD: 1 slot
-uint8 b;    // Slot 0
-address c;  // Slot 0 (packed)
-uint256 a;  // Slot 1
-```
-
-## 6. Reentrancy Protection
-
-```solidity
-bool locked;
-modifier nonReentrant() {
-    require(!locked);
-    locked = true;
-    _;
-    locked = false;
-}
-```
 
 ## 7. Custom Errors (Gas Efficient)
 

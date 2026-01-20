@@ -32,15 +32,6 @@ target.delegatecall(abi.encodeWithSignature("setNum(uint256)", 123));
 
 
 
-### Fallback/Receive Flow
-```
-Send ETH → msg.data empty? → YES → receive() exists? → YES → receive()
-                           ↓                          ↓
-                          NO                         NO
-                           ↓                          ↓
-                      fallback()                 fallback()
-```
-
 ## 4. Factory Pattern
 
 ```solidity

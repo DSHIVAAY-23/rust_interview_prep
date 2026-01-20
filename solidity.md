@@ -35,6 +35,19 @@ target.delegatecall(abi.encodeWithSignature("setNum(uint256)", 123));
 ## 4. Factory Pattern
 
 ```solidity
+
+contract Token {
+    address public owner;
+    uint256 public maxSupply; // Fixed typo
+    string public name;
+
+    // Added constructor to initialize variables
+    constructor(address _owner, string memory _name, uint256 _maxSupply) {
+        owner = _owner;
+        name = _name;
+        maxSupply = _maxSupply;
+    }
+}
 contract TokenFactory {
     Token[] public tokens;
     

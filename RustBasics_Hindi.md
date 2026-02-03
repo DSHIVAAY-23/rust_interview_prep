@@ -64,7 +64,10 @@ fn main() {
 #### Example 1: Generic Function
 
 ```rust
-fn print_value<T>(value: T) {
+use std::fmt::Debug;
+
+// FIX: Add ": Debug" after T
+fn print_value<T: Debug>(value: T) {
     println!("Value is: {:?}", value);
 }
 
@@ -72,8 +75,8 @@ fn main() {
     let num = 5;
     let text = "Hello, Rust!";
     
-    print_value(num); // Here T is replaced by i32
-    print_value(text); // Here T is replaced by &str
+    print_value(num);  // Works: i32 implements Debug
+    print_value(text); // Works: &str implements Debug
 }
 ```
 ---

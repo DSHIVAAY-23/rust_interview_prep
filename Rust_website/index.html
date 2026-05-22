@@ -2506,6 +2506,618 @@ fn main() {
 };
 
 // DATA END — APP LOGIC CONTINUES BELOW
+
+// ============================================================
+// STATE — safe initialization
+// ============================================================
+const state = {
+  progDone:  (() => { try { return new Set(JSON.parse(localStorage.getItem('rp_prog') || '[]')); } catch { return new Set(); } })(),
+  dsaSolved: (() => { try { return new Set(JSON.parse(localStorage.getItem('rp_dsa')  || '[]')); } catch { return new Set(); } })(),
+  streakDays: (() => { try { const s = JSON.parse(localStorage.getItem('rp_streak')); return Array.isArray(s) && s.length === 30 ? s : Array(30).fill(0); } catch { return Array(30).fill(0); } })(),
+  bookmarks:  (() => { try { return new Set(JSON.parse(localStorage.getItem('rp_bookmarks') || '[]')); } catch { return new Set(); } })(),
+  quizIdx: 0, quizScore: 0, quizAttempt: 0,
+  fontSize: parseInt(localStorage.getItem('rp_fontSize') || '13'),
+};
+
+function save() {
+  localStorage.setItem('rp_prog',      JSON.stringify([...state.progDone]));
+  localStorage.setItem('rp_dsa',       JSON.stringify([...state.dsaSolved]));
+  localStorage.setItem('rp_streak',    JSON.stringify(state.streakDays));
+  localStorage.setItem('rp_bookmarks', JSON.stringify([...state.bookmarks]));
+}
+
+// ============================================================
+// THEME SYSTEM
+// ============================================================
+function applyTheme(name) {
+  const t = THEMES[name]; if (!t) return;
+  Object.entries(t).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
+  localStorage.setItem('rp_theme', name);
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = name + ' ▾';
+}
+function toggleThemeMenu() {
+  const m = document.getElementById('theme-menu');
+  m.style.display = m.style.display === 'block' ? 'none' : 'block';
+}
+function renderThemeMenu() {
+  document.getElementById('theme-menu').innerHTML = Object.keys(THEMES).map(n =>
+    `<div class="theme-opt" onclick="applyTheme('${n}');toggleThemeMenu()">` +
+    `<span style="width:10px;height:10px;border-radius:50%;background:${THEMES[n]['--accent']};display:inline-block;flex-shrink:0"></span>${n}</div>`
+  ).join('');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#theme-wrap')) document.getElementById('theme-menu').style.display = 'none';
+});
+
+// ============================================================
+// FONT SIZE
+// ============================================================
+function adjustFont(delta) {
+  state.fontSize = Math.min(18, Math.max(11, state.fontSize + delta));
+  document.documentElement.style.fontSize = state.fontSize + 'px';
+  const d = document.getElementById('font-size-display');
+  if (d) d.textContent = state.fontSize + 'px';
+  localStorage.setItem('rp_fontSize', state.fontSize);
+}
+
+// ============================================================
+// NAVIGATION — always-render pattern (no !innerHTML checks)
+// ============================================================
+const RENDERS = {
+  'concepts':    renderConcepts,
+  'programs':    renderPrograms,
+  'which-to-use':renderDecisions,
+  'dsa-patterns':renderDSAPatterns,
+  'dsa-tracker': renderDSATracker,
+  'os-concepts': renderOSConcepts,
+  'database':    renderDB,
+  'rust-qa':     renderRustQA,
+  'os-qa':       renderOSQA,
+  'quiz':        renderQuiz,
+  'streak':      renderStreak,
+  'compiler':    () => {},
+};
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('section-' + id);
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll('.nav-item[data-section="' + id + '"]').forEach(n => n.classList.add('active'));
+  window.scrollTo(0, 0);
+  document.getElementById('sidebar').classList.remove('open');
+  if (RENDERS[id]) RENDERS[id]();
+  updateXP();
+}
+
+// XP
+function updateXP() {
+  const total = PROGRAMS.length + DSA_PATTERNS.reduce((a, p) => a + p.probs.length, 0);
+  const done  = state.progDone.size + state.dsaSolved.size;
+  const pct   = Math.round(done / total * 100);
+  const fill  = document.getElementById('xp-fill');
+  const num   = document.getElementById('xp-num');
+  const lbl   = document.getElementById('xp-done');
+  if (fill) fill.style.width = pct + '%';
+  if (num)  num.textContent  = done + ' xp';
+  if (lbl)  lbl.textContent  = done + '/' + total + ' done';
+}
+
+// ============================================================
+// UTILITY
+// ============================================================
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function toggleAcc(h) {
+  const open = h.classList.contains('open');
+  document.querySelectorAll('.acc-header.open').forEach(x => x.classList.remove('open'));
+  if (!open) h.classList.add('open');
+}
+// switchTab — uses parentElement since HTML has no data-tabgroup attr
+function switchTab(btn, group, id) {
+  btn.parentElement?.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[id^="' + group + '-"]').forEach(p => p.classList.remove('active'));
+  const p = document.getElementById(group + '-' + id);
+  if (p) p.classList.add('active');
+}
+function filterNav(val) {
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.style.display = (!val || n.textContent.toLowerCase().includes(val.toLowerCase())) ? '' : 'none';
+  });
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ============================================================
+// CONCEPTS
+// ============================================================
+function renderConcepts() {
+  document.getElementById('concept-nav').innerHTML = CONCEPTS.map((c, i) =>
+    `<button class="cnav-btn${i===0?' active':''}" onclick="selConcept(${i},this)">${c.name}</button>`
+  ).join('');
+  showConceptDetail(0);
+}
+function selConcept(i, btn) {
+  document.querySelectorAll('#concept-nav .cnav-btn').forEach(b => b.classList.remove('active'));
+  btn?.classList.add('active');
+  showConceptDetail(i);
+}
+function showConceptDetail(i) {
+  const c = CONCEPTS[i];
+  const cats = {
+    foundation:'badge-green', abstraction:'badge-blue', 'smart-ptrs':'badge-purple',
+    error:'badge-orange', functional:'badge-green', async:'badge-red', advanced:'badge-red'
+  };
+  document.getElementById('concept-detail').innerHTML = `
+    <div class="card fade-up">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span style="font-family:var(--font-sans);font-size:1.1rem;font-weight:700">${c.name}</span>
+        <span class="badge ${cats[c.cat]||'badge-green'}">${c.cat}</span>
+      </div>
+      <div class="concept-label">✓ use when</div><div class="concept-val">${c.when}</div>
+      <div class="concept-label">✗ avoid when</div><div class="concept-val">${c.avoid}</div>
+      <div class="concept-label">💡 pro tip</div><div class="concept-val">${c.tip}</div>
+      <div class="concept-label">🎤 interview line</div>
+      <div class="concept-val" style="color:var(--accent);font-style:italic">${c.interview}</div>
+      <div class="acc-header" onclick="toggleAcc(this)" style="margin-top:10px">
+        <span class="acc-title">basic example</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body"><pre class="code-block">${esc(c.basic)}</pre></div>
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span class="acc-title">advanced example</span><span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body"><pre class="code-block">${esc(c.advanced)}</pre></div>
+    </div>`;
+}
+
+// ============================================================
+// PROGRAMS
+// ============================================================
+function renderPrograms() {
+  const done = state.progDone.size;
+  const el_done = document.getElementById('p-done');
+  const el_rem  = document.getElementById('p-rem');
+  const el_pct  = document.getElementById('p-pct');
+  if (el_done) el_done.textContent = done;
+  if (el_rem)  el_rem.textContent  = PROGRAMS.length - done;
+  if (el_pct)  el_pct.textContent  = Math.round(done / PROGRAMS.length * 100) + '%';
+  document.getElementById('prog-list').innerHTML = PROGRAMS.map((p, i) => `
+    <div class="check-item">
+      <div class="chk${state.progDone.has(i)?' done':''}" onclick="togProg(${i})">${state.progDone.has(i)?'✓':''}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500">${i+1}. ${p.title}</div>
+        <div style="margin:3px 0">${p.cats.map(c=>`<span class="badge badge-green">${c}</span>`).join('')}</div>
+        <div class="acc-header" onclick="toggleAcc(this)" style="padding:4px 8px;margin-top:4px">
+          <span class="acc-title" style="font-size:11px">view code</span><span class="acc-arrow">▶</span>
+        </div>
+        <div class="acc-body"><pre class="code-block">${esc(p.code)}</pre></div>
+      </div>
+    </div>`).join('');
+}
+function togProg(i) {
+  state.progDone.has(i) ? state.progDone.delete(i) : state.progDone.add(i);
+  save(); renderPrograms(); updateXP();
+}
+
+// ============================================================
+// DECISIONS
+// ============================================================
+const DECISIONS = [
+  {q:'Value might be absent (null)?',    a:'Option<T>',          r:'read'},
+  {q:'Operation might fail?',            a:'Result<T,E>',         r:'own'},
+  {q:'Heap, one owner?',                 a:'Box<T>',              r:'own'},
+  {q:'Recursive type (tree, list)?',     a:'Box<T>',              r:'own'},
+  {q:'Many owners, read, single thread?',a:'Rc<T>',               r:'read'},
+  {q:'Many owners + mutate, 1 thread?',  a:'Rc<RefCell<T>>',      r:'mut'},
+  {q:'Break Rc cycle?',                  a:'Weak<T>',             r:'read'},
+  {q:'Many owners, multi-thread, read?', a:'Arc<T>',              r:'read'},
+  {q:'Many owners, multi-thread, mutate?',a:'Arc<Mutex<T>>',      r:'mut'},
+  {q:'Many readers, few writers?',       a:'Arc<RwLock<T>>',      r:'mut'},
+  {q:'Same logic for multiple types?',   a:'Generics <T>',        r:'read'},
+  {q:'Shared behaviour across types?',   a:'Traits',              r:'read'},
+  {q:'Runtime type selection?',          a:'Box<dyn Trait>',      r:'own'},
+  {q:'Process/transform collection?',    a:'Iterators',           r:'read'},
+  {q:'Closure only reads env?',          a:'Fn (&T)',             r:'read'},
+  {q:'Closure mutates env?',             a:'FnMut (&mut T)',      r:'mut'},
+  {q:'Closure consumes env?',            a:'FnOnce (T)',          r:'own'},
+  {q:'IO-bound async?',                  a:'async/await + Tokio', r:'read'},
+  {q:'CPU-bound parallel?',              a:'thread::spawn + rayon',r:'own'},
+  {q:'Pass data between threads?',       a:'mpsc channel',        r:'own'},
+  {q:'Mutate through shared ref?',       a:'RefCell<T>',          r:'mut'},
+  {q:'Init once, read many?',            a:'OnceLock',            r:'read'},
+];
+function renderDecisions() {
+  const colors = {read:'#4da6ff', mut:'#00ff88', own:'#ff9966'};
+  const bg     = {read:'rgba(77,166,255,0.1)', mut:'rgba(0,255,136,0.1)', own:'rgba(255,153,102,0.1)'};
+  document.getElementById('decision-list').innerHTML = DECISIONS.map(d => `
+    <div style="display:grid;grid-template-columns:1fr 60px auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:12px;color:var(--text2)">${d.q}</span>
+      <span style="font-size:10px;padding:2px 6px;border-radius:3px;background:${bg[d.r]};color:${colors[d.r]};text-align:center">${d.r}</span>
+      <span class="badge badge-green" style="white-space:nowrap">${d.a}</span>
+    </div>`).join('');
+}
+
+// DSA PATTERNS — static HTML tabs, nothing to render
+function renderDSAPatterns() {}
+
+// ============================================================
+// DSA TRACKER
+// ============================================================
+function renderDSATracker() {
+  const total  = DSA_PATTERNS.reduce((a, p) => a + p.probs.length, 0);
+  const solved = state.dsaSolved.size;
+  document.getElementById('dsa-metrics').innerHTML =
+    [['solved', solved], ['remaining', total - solved], ['% complete', Math.round(solved/total*100)+'%']]
+    .map(([l,v]) => `<div class="metric"><span class="metric-val">${v}</span><span class="metric-label">${l}</span></div>`)
+    .join('');
+  document.getElementById('dsa-list').innerHTML = DSA_PATTERNS.map(p => {
+    const pd  = p.probs.filter(pr => state.dsaSolved.has(pr.u)).length;
+    const pct = Math.round(pd / p.probs.length * 100);
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="font-size:13px">${p.name}</strong>
+        <span class="badge badge-green">${pd}/${p.probs.length}</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div style="margin-top:8px">${p.probs.map(pr => {
+        const safe = pr.u.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        return `<span class="prob-chip${state.dsaSolved.has(pr.u)?' solved':''}" onclick="togDSA('${safe}')">
+          ${state.dsaSolved.has(pr.u)?'✓ ':''}
+          <a href="${pr.u}" target="_blank" onclick="event.stopPropagation()" style="color:inherit;text-decoration:none">${pr.n}</a>
+        </span>`;
+      }).join('')}</div>
+    </div>`;
+  }).join('');
+}
+function togDSA(url) {
+  state.dsaSolved.has(url) ? state.dsaSolved.delete(url) : state.dsaSolved.add(url);
+  save(); renderDSATracker(); updateXP();
+}
+
+// ============================================================
+// OS CONCEPTS
+// ============================================================
+function renderOSConcepts() {
+  document.getElementById('os-nav').innerHTML = OS_CONCEPTS.map((c, i) =>
+    `<button class="cnav-btn${i===0?' active':''}" onclick="selOS(${i},this)">${c.name}</button>`
+  ).join('');
+  showOSDetail(0);
+}
+function selOS(i, btn) {
+  document.querySelectorAll('#os-nav .cnav-btn').forEach(b => b.classList.remove('active'));
+  btn?.classList.add('active');
+  showOSDetail(i);
+}
+function showOSDetail(i) {
+  const c = OS_CONCEPTS[i];
+  document.getElementById('os-detail').innerHTML = `<div class="card fade-up">
+    <div style="font-family:var(--font-sans);font-size:1.1rem;font-weight:700;margin-bottom:12px">${c.name}</div>
+    <div class="concept-label">definition</div><div class="concept-val">${c.def}</div>
+    <div class="concept-label">✓ use when</div><div class="concept-val">${c.when}</div>
+    <div class="concept-label">✗ avoid when</div><div class="concept-val">${c.avoid}</div>
+    <div class="concept-label">💡 tip</div><div class="concept-val">${c.tip}</div>
+    <div class="concept-label">🎤 interview</div>
+    <div class="concept-val" style="color:var(--accent);font-style:italic">${c.interview}</div>
+    <pre class="code-block" style="margin-top:10px">${esc(c.code)}</pre>
+  </div>`;
+}
+
+// ============================================================
+// DATABASE
+// ============================================================
+function renderDB() {
+  document.getElementById('db-nav').innerHTML = DB_CONCEPTS.map((c, i) =>
+    `<button class="cnav-btn${i===0?' active':''}" onclick="selDB(${i},this)">${c.name}</button>`
+  ).join('');
+  showDBDetail(0);
+}
+function selDB(i, btn) {
+  document.querySelectorAll('#db-nav .cnav-btn').forEach(b => b.classList.remove('active'));
+  btn?.classList.add('active');
+  showDBDetail(i);
+}
+function showDBDetail(i) {
+  const c = DB_CONCEPTS[i];
+  document.getElementById('db-detail').innerHTML = `<div class="card fade-up">
+    <div style="font-family:var(--font-sans);font-size:1.1rem;font-weight:700;margin-bottom:12px">${c.name}</div>
+    <div class="concept-label">definition</div><div class="concept-val">${c.def}</div>
+    <div class="concept-label">✓ use when</div><div class="concept-val">${c.when}</div>
+    <div class="concept-label">✗ avoid when</div><div class="concept-val">${c.avoid}</div>
+    <div class="concept-label">💡 tip</div><div class="concept-val">${c.tip}</div>
+    <div class="concept-label">🎤 interview</div>
+    <div class="concept-val" style="color:var(--accent);font-style:italic">${c.interview}</div>
+    <pre class="code-block" style="margin-top:10px">${esc(c.code)}</pre>
+  </div>`;
+}
+
+// ============================================================
+// Q&A
+// ============================================================
+let rustCat = 'All';
+let osCat   = 'All';
+
+function renderRustQA() {
+  const cats = ['All', ...new Set(RUST_QA.map(q => q.cat)), '🔖 Saved'];
+  document.getElementById('rust-qa-tabs').innerHTML = cats.map(c =>
+    `<button class="tab-btn${rustCat===c?' active':''}" onclick="setRustCat('${c}')">${c}</button>`
+  ).join('');
+  const list = rustCat === 'All'        ? RUST_QA
+             : rustCat === '🔖 Saved'  ? RUST_QA.filter((_, i) => state.bookmarks.has('rust-'+i))
+             :                            RUST_QA.filter(q => q.cat === rustCat);
+  document.getElementById('rust-qa-list').innerHTML = list.map(q => {
+    const idx  = RUST_QA.indexOf(q);
+    const diff = q.difficulty || 'intermediate';
+    const bm   = state.bookmarks.has('rust-' + idx);
+    return `<div class="qa-card">
+      <div class="qa-header" onclick="this.classList.toggle('open')">
+        <span class="qa-num">Q${String(idx+1).padStart(3,'0')}</span>
+        <span class="qa-q">${q.q}</span>
+        <span class="qa-diff badge-${diff}">${diff}</span>
+        <button class="qa-bm${bm?' saved':''}" onclick="toggleBM('rust-${idx}',this,event)">${bm?'🔖':'🔖'}</button>
+        <span class="qa-arr">▼</span>
+      </div>
+      <div class="qa-body">
+        <p style="margin-bottom:8px">${q.a}</p>
+        <pre class="code-block">${esc(q.code)}</pre>
+      </div>
+    </div>`;
+  }).join('') || '<div class="card" style="color:var(--text3);text-align:center;padding:2rem">No questions match this filter.</div>';
+}
+function setRustCat(c) { rustCat = c; renderRustQA(); }
+
+function renderOSQA() {
+  const cats = ['All', 'OS', 'DB', '🔖 Saved'];
+  document.getElementById('osdb-qa-tabs').innerHTML = cats.map(c =>
+    `<button class="tab-btn${osCat===c?' active':''}" onclick="setOSCat('${c}')">${c}</button>`
+  ).join('');
+  const list = osCat === 'All'        ? OS_QA
+             : osCat === '🔖 Saved'  ? OS_QA.filter((_, i) => state.bookmarks.has('os-'+i))
+             :                          OS_QA.filter(q => q.cat === osCat);
+  document.getElementById('osdb-qa-list').innerHTML = list.map(q => {
+    const idx = OS_QA.indexOf(q);
+    const bm  = state.bookmarks.has('os-' + idx);
+    return `<div class="qa-card">
+      <div class="qa-header" onclick="this.classList.toggle('open')">
+        <span class="qa-num">Q${String(idx+1).padStart(3,'0')}</span>
+        <span class="qa-q">${q.q}</span>
+        <span class="qa-diff badge-${q.difficulty||'intermediate'}">${q.cat}</span>
+        <button class="qa-bm${bm?' saved':''}" onclick="toggleBM('os-${idx}',this,event)">${bm?'🔖':'🔖'}</button>
+        <span class="qa-arr">▼</span>
+      </div>
+      <div class="qa-body">
+        <p style="margin-bottom:8px">${q.a}</p>
+        <pre class="code-block">${esc(q.code)}</pre>
+      </div>
+    </div>`;
+  }).join('') || '<div class="card" style="color:var(--text3);text-align:center;padding:2rem">No questions match this filter.</div>';
+}
+function setOSCat(c) { osCat = c; renderOSQA(); }
+
+function toggleBM(key, el, e) {
+  e.stopPropagation();
+  state.bookmarks.has(key) ? state.bookmarks.delete(key) : state.bookmarks.add(key);
+  el.classList.toggle('saved');
+  save();
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function renderQuiz() {
+  const q = ALL_QUIZ[state.quizIdx % ALL_QUIZ.length];
+  document.getElementById('quiz-card').innerHTML = `
+    <div class="card">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">
+        <span class="badge badge-blue">${q.cat}</span>
+        question ${state.quizIdx + 1} of ${ALL_QUIZ.length}
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px;line-height:1.5">${q.q}</div>
+      <button onclick="revealQ()" id="run-btn" style="background:var(--accent);color:#000;border:none;font-family:var(--font-mono);padding:6px 16px;border-radius:var(--radius);cursor:pointer;font-weight:700">reveal answer</button>
+      <div id="quiz-reveal" style="display:none;margin-top:12px">
+        <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">${q.a}</p>
+        <pre class="code-block">${esc(q.code)}</pre>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button onclick="markQ(true)" style="background:var(--accent);color:#000;border:none;font-family:var(--font-mono);padding:5px 14px;border-radius:var(--radius);cursor:pointer;font-weight:700">✓ got it</button>
+          <button onclick="markQ(false)" style="background:transparent;border:1px solid var(--border2);color:var(--text);font-family:var(--font-mono);padding:5px 14px;border-radius:var(--radius);cursor:pointer">✗ review</button>
+        </div>
+      </div>
+    </div>`;
+}
+function revealQ() {
+  const r = document.getElementById('quiz-reveal');
+  if (r) r.style.display = 'block';
+  state.quizAttempt++;
+  const el = document.getElementById('quiz-attempt');
+  if (el) el.textContent = state.quizAttempt;
+}
+function markQ(ok) {
+  if (ok) { state.quizScore++; document.getElementById('quiz-score').textContent = state.quizScore; }
+  document.getElementById('quiz-pct').textContent = Math.round(state.quizScore / Math.max(state.quizAttempt, 1) * 100) + '%';
+  nextQuiz();
+}
+function nextQuiz()    { state.quizIdx = (state.quizIdx + 1) % ALL_QUIZ.length; renderQuiz(); }
+function shuffleQuiz() {
+  for (let i = ALL_QUIZ.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [ALL_QUIZ[i], ALL_QUIZ[j]] = [ALL_QUIZ[j], ALL_QUIZ[i]];
+  }
+  state.quizIdx = 0; renderQuiz();
+}
+
+// ============================================================
+// STREAK
+// ============================================================
+function renderStreak() {
+  document.getElementById('streak-grid').innerHTML = Array(30).fill(0).map((_, i) => {
+    const s   = state.streakDays[i];
+    const cls = s === 2 ? 'done' : s === 1 ? 'partial' : '';
+    return `<div class="s-day ${cls}${i===0?' today':''}" onclick="cycleStreak(${i})" title="Day ${i+1}">${i+1}</div>`;
+  }).join('');
+}
+function cycleStreak(i) {
+  state.streakDays[i] = (state.streakDays[i] + 1) % 3;
+  save(); renderStreak();
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+let searchIndex = [];
+function buildSearch() {
+  searchIndex = [];
+  CONCEPTS.forEach(c     => searchIndex.push({type:'concept', title:c.name,  sub:c.when.slice(0,50),       section:'concepts'}));
+  PROGRAMS.forEach(p     => searchIndex.push({type:'program', title:p.title, sub:p.cats.join(', '),         section:'programs'}));
+  DSA_PATTERNS.forEach(p => p.probs.forEach(pr => searchIndex.push({type:'dsa', title:pr.n, sub:p.name, section:'dsa-tracker', url:pr.u})));
+  RUST_QA.forEach(q      => searchIndex.push({type:'qa',      title:q.q,     sub:'Rust Q&A',                section:'rust-qa'}));
+  OS_QA.forEach(q        => searchIndex.push({type:'qa',      title:q.q,     sub:'OS/DB Q&A',               section:'os-qa'}));
+  OS_CONCEPTS.forEach(c  => searchIndex.push({type:'os',      title:c.name,  sub:c.def.slice(0,50),         section:'os-concepts'}));
+  DB_CONCEPTS.forEach(c  => searchIndex.push({type:'db',      title:c.name,  sub:c.def.slice(0,50),         section:'database'}));
+}
+function doSearch(val) {
+  const el = document.getElementById('search-results');
+  if (!val || val.length < 2) { el.style.display = 'none'; return; }
+  const v = val.toLowerCase();
+  const hits = searchIndex.filter(x =>
+    x.title.toLowerCase().includes(v) || x.sub.toLowerCase().includes(v)
+  ).slice(0, 10);
+  if (!hits.length) { el.style.display = 'none'; return; }
+  const groups = {};
+  hits.forEach(r => { (groups[r.type] = groups[r.type] || []).push(r); });
+  el.innerHTML = Object.entries(groups).map(([type, items]) =>
+    `<div class="sr-type">${type.toUpperCase()} (${items.length})</div>` +
+    items.map(x => `<div class="sr-item" onclick="showSection('${x.section}');document.getElementById('search-input').value='';document.getElementById('search-results').style.display='none'">
+      <strong>${x.title}</strong>
+      <span style="color:var(--text3);font-size:10px;margin-left:8px">${x.sub}</span>
+    </div>`).join('')
+  ).join('');
+  el.style.display = 'block';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#search-wrap') && !e.target.closest('#search-results'))
+    document.getElementById('search-results').style.display = 'none';
+});
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); document.getElementById('search-input').focus(); }
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault(); document.getElementById('search-input').focus();
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('search-results').style.display = 'none';
+    document.getElementById('search-input').blur();
+  }
+});
+
+// ============================================================
+// COMPILER
+// ============================================================
+const DEFAULT_CODE = `fn main() {
+    let message = String::from("Hello, Rust!");
+    println!("{message}");
+
+    let sum: i32 = (1..=10)
+        .filter(|x| x % 2 == 0)
+        .map(|x| x * x)
+        .sum();
+    println!("Sum of even squares 1..10: {sum}");
+}`;
+
+// SNIPPETS already defined in the data section above
+function loadSnippet(name) {
+  const ed = document.getElementById('editor');
+  if (ed && SNIPPETS[name]) { ed.value = SNIPPETS[name]; ed.focus(); }
+}
+
+async function runCode() {
+  const ed  = document.getElementById('editor');
+  const btn = document.getElementById('run-btn');
+  const out = document.getElementById('output');
+  const ch  = document.getElementById('channel-sel').value;
+  const ed2 = document.getElementById('edition-sel').value;
+  if (!ed || !out) return;
+  btn.textContent = '⏳ Running…'; btn.disabled = true;
+  out.textContent = '// Compiling…'; out.className = 'idle';
+  try {
+    const r = await fetch('https://play.rust-lang.org/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel: ch, mode: 'debug', edition: ed2, crateType: 'bin', tests: false, code: ed.value, backtrace: false }),
+    });
+    const d = await r.json();
+    if (d.success) { out.textContent = d.stdout || '(no output)'; out.className = ''; }
+    else           { out.textContent = d.stderr  || 'Compilation error'; out.className = 'error'; }
+  } catch(e) {
+    out.textContent = 'Network error: ' + e.message; out.className = 'error';
+  }
+  btn.textContent = '▶ Run'; btn.disabled = false;
+}
+
+async function formatCode() {
+  const ed  = document.getElementById('editor');
+  const btn = document.getElementById('run-btn');
+  if (!ed) return;
+  try {
+    const r = await fetch('https://play.rust-lang.org/format', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel: document.getElementById('channel-sel').value, edition: document.getElementById('edition-sel').value, code: ed.value }),
+    });
+    const d = await r.json();
+    if (d.success && d.code) ed.value = d.code;
+  } catch {}
+}
+
+function clearEditor() {
+  const ed = document.getElementById('editor');
+  const out = document.getElementById('output');
+  if (ed) ed.value = '';
+  if (out) { out.textContent = '// Press ▶ Run to execute your code'; out.className = 'idle'; }
+}
+function copyCode() {
+  const ed = document.getElementById('editor');
+  if (ed) navigator.clipboard.writeText(ed.value);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // themes
+  renderThemeMenu();
+  applyTheme(localStorage.getItem('rp_theme') || 'Dark');
+
+  // font size
+  document.documentElement.style.fontSize = state.fontSize + 'px';
+  const fsd = document.getElementById('font-size-display');
+  if (fsd) fsd.textContent = state.fontSize + 'px';
+
+  // search
+  buildSearch();
+  document.getElementById('search-input').addEventListener('input', e => doSearch(e.target.value));
+  document.getElementById('nav-search').addEventListener('input',   e => filterNav(e.target.value));
+
+  // compiler defaults
+  const ed = document.getElementById('editor');
+  if (ed) {
+    ed.value = DEFAULT_CODE;
+    ed.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); runCode(); }
+    });
+  }
+
+  // snippet buttons
+  const sb = document.getElementById('snippet-btns');
+  if (sb) sb.innerHTML = Object.keys(SNIPPETS).map(n =>
+    `<button class="snippet-btn" onclick="loadSnippet('${n}')">${n}</button>`
+  ).join('');
+
+  // show home and render initial state
+  showSection('home');
+  updateXP();
+});
 </script>
 </body>
 </html>

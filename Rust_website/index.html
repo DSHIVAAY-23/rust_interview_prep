@@ -2916,7 +2916,7 @@ function renderQuiz() {
         question ${state.quizIdx + 1} of ${ALL_QUIZ.length}
       </div>
       <div style="font-size:14px;font-weight:600;margin-bottom:12px;line-height:1.5">${q.q}</div>
-      <button onclick="revealQ()" id="run-btn" style="background:var(--accent);color:#000;border:none;font-family:var(--font-mono);padding:6px 16px;border-radius:var(--radius);cursor:pointer;font-weight:700">reveal answer</button>
+      <button onclick="revealQ()" style="background:var(--accent);color:#000;border:none;font-family:var(--font-mono);padding:6px 16px;border-radius:var(--radius);cursor:pointer;font-weight:700">reveal answer</button>
       <div id="quiz-reveal" style="display:none;margin-top:12px">
         <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px">${q.a}</p>
         <pre class="code-block">${esc(q.code)}</pre>

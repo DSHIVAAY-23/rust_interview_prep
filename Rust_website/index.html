@@ -6,9 +6,6 @@
 <title>rust-prep — Divyank Rai</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" id="hljs-theme">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>
 <style>
 :root {
   --bg: #0a0a0a;
@@ -17,165 +14,268 @@
   --bg4: #222222;
   --border: #2a2a2a;
   --border2: #333333;
-  --green: #00ff88;
-  --green2: #00cc6a;
-  --green-dim: rgba(0,255,136,0.08);
-  --green-dim2: rgba(0,255,136,0.15);
-  --accent: #00ff88;
-  --code-bg: #000000;
-  --font-size-base: 13px;
-  --blue: #4da6ff;
-  --orange: #ff9966;
-  --purple: #cc88ff;
-  --red: #ff6666;
-  --yellow: #ffdd66;
   --text: #e8e8e8;
   --text2: #999999;
-  --text3: #666666;
-  --mono: 'JetBrains Mono', monospace;
-  --sans: 'Syne', sans-serif;
+  --text3: #555555;
+  --accent: #00ff88;
+  --accent2: #00cc6a;
+  --code-bg: #000000;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Syne', sans-serif;
   --radius: 6px;
 }
 
-/* THEME SWITCHER */
-.theme-switcher { position: relative; }
-.theme-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text2);
-  padding: 3px 7px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-.theme-btn:hover { color: var(--text); border-color: var(--accent); }
-.theme-menu {
-  display: none;
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  min-width: 150px;
-  z-index: 500;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-  padding: 4px;
-}
-.theme-menu.open { display: block; }
-.theme-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text2);
-  transition: all 0.1s;
-}
-.theme-option:hover { background: var(--bg3); color: var(--text); }
-.theme-option.active { color: var(--accent); }
-.theme-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--mono);
-  font-size: var(--font-size-base);
+  font-family: var(--font-mono);
   min-height: 100vh;
   line-height: 1.6;
 }
 
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-/* LAYOUT */
-.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
-
-/* SIDEBAR */
-.sidebar {
+/* ===== TOPBAR ===== */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 44px;
   background: var(--bg2);
-  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 50px;
-  height: calc(100vh - 50px);
-  overflow-y: auto;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  z-index: 1000;
 }
 
-.sidebar-header {
-  padding: 1.25rem 1rem;
+#search-wrap {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  gap: 8px;
+}
+#search-wrap:focus-within { border-color: var(--accent); }
+
+#search-input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  flex: 1;
+  outline: none;
+  width: 100%;
+}
+#search-input::placeholder { color: var(--text3); }
+
+.search-hint {
+  font-size: 9px;
+  color: var(--text3);
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  padding: 2px 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#search-results {
+  position: fixed;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 580px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  z-index: 999;
+  display: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+#search-results.open { display: block; }
+
+.sr-type {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  padding: 6px 12px 2px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  letter-spacing: 1px;
+}
+.sr-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.sr-item:hover { background: var(--bg3); }
+.sr-item-label { color: var(--text); }
+.sr-item-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.sr-highlight { background: rgba(0,255,136,0.2); color: var(--accent); border-radius: 2px; padding: 0 1px; }
+.sr-empty { padding: 14px 12px; font-size: 12px; color: var(--text3); }
+
+/* ===== FONT CONTROLS ===== */
+#font-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+#font-controls button {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  transition: border-color 0.15s;
+}
+#font-controls button:hover { border-color: var(--accent); color: var(--accent); }
+#font-size-display {
+  color: var(--text3);
+  min-width: 32px;
+  text-align: center;
+  font-size: 11px;
+}
+
+/* ===== LAYOUT ===== */
+#layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+  padding-top: 44px;
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 44px;
+  height: calc(100vh - 44px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar-header {
+  padding: 1rem;
   border-bottom: 1px solid var(--border);
 }
 
 .logo {
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 800;
-  color: var(--green);
-  letter-spacing: -0.5px;
+  color: var(--accent);
 }
 .logo span { color: var(--text2); font-weight: 400; }
 
-.version-badge {
-  display: inline-block;
-  font-size: 10px;
-  background: var(--green-dim2);
-  color: var(--green);
-  padding: 1px 6px;
-  border-radius: 3px;
-  margin-top: 4px;
-  border: 1px solid rgba(0,255,136,0.2);
-}
-
-.xp-bar-wrap { margin-top: 10px; }
-.xp-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; display: flex; justify-content: space-between; }
-.xp-bar { height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
-.xp-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.5s; border-radius: 2px; }
-
-.sidebar-search {
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-search input {
-  width: 100%;
+/* THEME SWITCHER */
+#theme-wrap { position: relative; margin-top: 8px; }
+#theme-btn {
   background: var(--bg3);
   border: 1px solid var(--border2);
   color: var(--text);
-  font-family: var(--mono);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+#theme-btn:hover { border-color: var(--accent); }
+#theme-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  z-index: 100;
+  margin-top: 2px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+#theme-menu.open { display: block; }
+.theme-opt {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.1s;
+}
+.theme-opt:hover { background: var(--bg3); }
+.theme-opt.active { color: var(--accent); }
+.theme-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.version-badge { font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+.xp-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 8px;
+}
+.xp-bar-outer {
+  height: 3px;
+  background: var(--bg4);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+#xp-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.5s;
+}
+
+#sidebar-search {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+#nav-search {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
   font-size: 11px;
   padding: 5px 8px;
   border-radius: var(--radius);
   outline: none;
 }
-.sidebar-search input::placeholder { color: var(--text3); }
-.sidebar-search input:focus { border-color: var(--green); }
+#nav-search::placeholder { color: var(--text3); }
+#nav-search:focus { border-color: var(--accent); }
 
-.nav-section { padding: 0.5rem 0; }
-.nav-label {
+/* NAV */
+nav { padding: 4px 0; }
+.nav-section-label {
   font-size: 9px;
   color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 4px 1rem 2px;
+  padding: 6px 1rem 2px;
 }
 .nav-item {
   display: flex;
@@ -185,104 +285,40 @@ body {
   font-size: 12px;
   color: var(--text2);
   cursor: pointer;
-  transition: all 0.15s;
   border-left: 2px solid transparent;
+  transition: all 0.15s;
   text-decoration: none;
 }
 .nav-item:hover { color: var(--text); background: var(--bg3); }
-.nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
-.nav-item .num { color: var(--text3); font-size: 10px; min-width: 20px; }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,255,136,0.05); }
+.nav-num { color: var(--text3); font-size: 10px; min-width: 20px; }
 .nav-dot { width: 5px; height: 5px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
-.nav-dot.hot { background: var(--orange); }
-.nav-dot.new { background: var(--green); }
+.nav-dot.hot { background: #ff9966; }
+.nav-dot.new { background: var(--accent); }
 
-/* MAIN */
-.main { overflow-y: auto; }
+/* ===== MAIN ===== */
+#main { overflow-y: auto; }
 
-/* HERO */
-.hero {
-  padding: 3rem 2.5rem 2rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg2);
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.terminal-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 1rem;
-}
-.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
-.td-red { background: #ff5f56; }
-.td-yellow { background: #ffbd2e; }
-.td-green { background: #27c93f; }
-.terminal-title { font-size: 11px; color: var(--text3); margin-left: 6px; }
-
-.hero h1 {
-  font-family: var(--sans);
-  font-size: 2.2rem;
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 0.5rem;
-}
-.hero h1 .accent { color: var(--green); }
-.hero p { font-size: 13px; color: var(--text2); max-width: 560px; line-height: 1.7; }
-
-.hero-stats {
-  display: flex;
-  gap: 2rem;
-  margin-top: 1.5rem;
-}
-.stat { text-align: center; }
-.stat-num { font-family: var(--sans); font-size: 1.6rem; font-weight: 800; color: var(--green); display: block; }
-.stat-label { font-size: 10px; color: var(--text3); }
-
-.hero-cmd {
-  margin-top: 1.5rem;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 0.75rem 1rem;
-  font-size: 12px;
-  color: var(--text2);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.hero-cmd .prompt { color: var(--green); }
-.hero-cmd .cmd { color: var(--text); }
-
-/* SECTIONS */
 .section {
   display: none;
   padding: 2rem 2.5rem;
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 44px);
 }
 .section.active { display: block; }
 
-.section-header { margin-bottom: 1.5rem; }
 .section-title {
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: 1.3rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-bottom: 4px;
 }
-.section-title .tag {
-  font-family: var(--mono);
+.section-sub { font-size: 12px; color: var(--text2); margin-bottom: 1.5rem; }
+
+.tag {
+  font-family: var(--font-mono);
   font-size: 10px;
   background: var(--bg3);
   color: var(--text3);
@@ -291,20 +327,19 @@ body {
   border: 1px solid var(--border2);
   font-weight: 400;
 }
-.section-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
 
 /* CARDS */
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem;
-  margin-bottom: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 10px;
   transition: border-color 0.2s;
 }
 .card:hover { border-color: var(--border2); }
 .card-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-.card-sub { font-size: 11px; color: var(--text2); line-height: 1.6; }
+.card-sub { font-size: 12px; color: var(--text2); line-height: 1.6; }
 
 /* BADGES */
 .badge {
@@ -313,19 +348,162 @@ body {
   padding: 2px 7px;
   border-radius: 3px;
   font-weight: 500;
-  margin-right: 4px;
+  margin-right: 3px;
 }
-.badge-green { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
-.badge-blue { background: rgba(77,166,255,0.1); color: var(--blue); border: 1px solid rgba(77,166,255,0.2); }
-.badge-orange { background: rgba(255,153,102,0.1); color: var(--orange); border: 1px solid rgba(255,153,102,0.2); }
-.badge-purple { background: rgba(204,136,255,0.1); color: var(--purple); border: 1px solid rgba(204,136,255,0.2); }
-.badge-red { background: rgba(255,102,102,0.1); color: var(--red); border: 1px solid rgba(255,102,102,0.2); }
-.badge-yellow { background: rgba(255,221,102,0.1); color: var(--yellow); border: 1px solid rgba(255,221,102,0.2); }
+.badge-green  { background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid rgba(0,255,136,0.2); }
+.badge-blue   { background: rgba(77,166,255,0.1); color: #4da6ff; border: 1px solid rgba(77,166,255,0.2); }
+.badge-orange { background: rgba(255,153,102,0.1); color: #ff9966; border: 1px solid rgba(255,153,102,0.2); }
+.badge-purple { background: rgba(204,136,255,0.1); color: #cc88ff; border: 1px solid rgba(204,136,255,0.2); }
+.badge-red    { background: rgba(255,102,102,0.1); color: #ff6666; border: 1px solid rgba(255,102,102,0.2); }
+.badge-basic        { background: rgba(0,204,107,0.15); color: #00cc6a; border: 1px solid rgba(0,204,107,0.2); }
+.badge-intermediate { background: rgba(255,153,0,0.15); color: #ff9900; border: 1px solid rgba(255,153,0,0.2); }
+.badge-advanced     { background: rgba(255,80,80,0.15); color: #ff5050; border: 1px solid rgba(255,80,80,0.2); }
+
+/* CODE BLOCK */
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--code-bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 10px;
+  line-height: 1.65;
+  white-space: pre;
+  overflow-x: auto;
+  color: #c9d1d9;
+  margin-top: 8px;
+}
+
+/* ACCORDION */
+.acc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: all 0.15s;
+}
+.acc-header:hover { border-color: var(--border2); }
+.acc-header.open {
+  border-color: var(--accent);
+  background: rgba(0,255,136,0.05);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.acc-title { font-size: 12px; font-weight: 500; flex: 1; }
+.acc-arrow { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
+.acc-header.open .acc-arrow { transform: rotate(90deg); }
+.acc-body {
+  display: none;
+  padding: 12px;
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  margin-bottom: 4px;
+}
+.acc-header.open + .acc-body { display: block; }
+
+/* GRIDS */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+/* METRICS */
+.metric {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+.metric-val { font-family: var(--font-sans); font-size: 1.8rem; font-weight: 800; color: var(--accent); display: block; }
+.metric-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* CONCEPT NAV BUTTONS */
+.cnav-btn {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  padding: 3px 9px;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text2);
+  margin: 2px;
+  transition: all 0.15s;
+}
+.cnav-btn:hover { color: var(--text); }
+.cnav-btn.active { background: rgba(0,255,136,0.1); color: var(--accent); border-color: rgba(0,255,136,0.3); }
+
+/* CONCEPT DETAIL */
+.concept-label {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+  margin-top: 10px;
+}
+.concept-val { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+/* PROGRAM CHECKLIST */
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.check-item:last-child { border-bottom: none; }
+.chk {
+  width: 17px; height: 17px; min-width: 17px;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  margin-top: 1px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.chk.done { background: var(--accent); border-color: var(--accent); color: #000; }
+.check-content { flex: 1; min-width: 0; }
+.check-title { font-size: 12px; font-weight: 500; }
+.check-tags { margin-top: 3px; }
+
+/* PROGRESS BAR */
+.prog-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+.prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
+
+/* DSA CHIPS */
+.prob-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin: 2px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.prob-chip:hover { border-color: var(--accent); color: var(--accent); }
+.prob-chip.solved { background: rgba(0,255,136,0.08); color: var(--accent); border-color: rgba(0,255,136,0.25); }
 
 /* TABS */
-.tabs { display: flex; gap: 4px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.tabs { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
 .tab-btn {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 11px;
   padding: 4px 10px;
   border: 1px solid var(--border2);
@@ -336,635 +514,13 @@ body {
   transition: all 0.15s;
 }
 .tab-btn:hover { color: var(--text); border-color: var(--text3); }
-.tab-btn.active { background: var(--green-dim2); color: var(--green); border-color: rgba(0,255,136,0.3); }
-
+.tab-btn.active { background: rgba(0,255,136,0.1); color: var(--accent); border-color: rgba(0,255,136,0.3); }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
 
-/* CODE */
-.code-block {
-  background: var(--code-bg);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 1rem;
-  font-size: 11px;
-  line-height: 1.7;
-  overflow-x: auto;
-  margin-top: 8px;
-  white-space: pre;
-  color: #c9d1d9;
-  position: relative;
-}
-.code-lang {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 9px;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-
-/* ACCORDION */
-.accordion { margin-bottom: 6px; }
-.acc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.15s;
-  gap: 8px;
-}
-.acc-header:hover { border-color: var(--border2); background: var(--bg3); }
-.acc-header.open { border-color: var(--green); border-bottom-left-radius: 0; border-bottom-right-radius: 0; background: var(--green-dim); }
-.acc-title { font-size: 12px; font-weight: 500; flex: 1; }
-.acc-arrow { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
-.acc-header.open .acc-arrow { transform: rotate(90deg); }
-.acc-body {
-  display: none;
-  padding: 12px;
-  background: var(--bg2);
-  border: 1px solid var(--green);
-  border-top: none;
-  border-bottom-left-radius: var(--radius);
-  border-bottom-right-radius: var(--radius);
-}
-.acc-header.open + .acc-body { display: block; }
-
-/* TABLE */
-.table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.table th {
-  background: var(--bg3);
-  padding: 6px 10px;
-  text-align: left;
-  border-bottom: 1px solid var(--border2);
-  font-weight: 500;
-  color: var(--text2);
-}
-.table td {
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text2);
-  vertical-align: top;
-}
-.table tr:last-child td { border-bottom: none; }
-.table tr:hover td { background: var(--bg3); }
-
-/* GRID */
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-
-/* PROGRESS */
-.prog-wrap { margin-bottom: 10px; }
-.prog-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 4px; }
-.prog-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
-.prog-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.5s; }
-
-/* CHECKBOX */
-.check-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-}
-.check-item:last-child { border-bottom: none; }
-.chk {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  margin-top: 1px;
-  transition: all 0.15s;
-}
-.chk.done { background: var(--green); border-color: var(--green); color: var(--bg); }
-.check-content { flex: 1; }
-.check-title { font-size: 12px; }
-.check-tags { margin-top: 3px; }
-
-/* DSA CHIP */
-.prob-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 3px;
-  margin: 2px;
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  color: var(--text2);
-  text-decoration: none;
-  transition: all 0.15s;
-  cursor: pointer;
-}
-.prob-chip:hover { border-color: var(--green); color: var(--green); }
-.prob-chip.solved { background: rgba(0,255,136,0.08); color: var(--green); border-color: rgba(0,255,136,0.25); }
-
-/* MEMORY MODEL TABLE */
-.model-grid {
-  display: grid;
-  grid-template-columns: 110px 1fr 1fr 1fr;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  font-size: 11px;
-}
-.mg-cell {
-  padding: 7px 10px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.mg-cell:last-child { border-right: none; }
-.mg-head { background: var(--bg3); font-weight: 500; color: var(--text2); font-size: 10px; }
-.mg-read { color: var(--blue); }
-.mg-mut { color: var(--green); }
-.mg-own { color: var(--orange); }
-
-/* QUIZ */
-.quiz-card {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 12px;
-}
-.quiz-q { font-size: 14px; font-weight: 600; margin-bottom: 1rem; line-height: 1.5; }
-.quiz-reveal {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 1rem;
-  font-size: 12px;
-  color: var(--text2);
-  display: none;
-  line-height: 1.7;
-}
-
-/* BTN */
-.btn {
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 5px 14px;
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  cursor: pointer;
-  background: transparent;
-  color: var(--text);
-  transition: all 0.15s;
-}
-.btn:hover { border-color: var(--green); color: var(--green); }
-.btn-green { background: var(--green); color: var(--bg); border-color: var(--green); font-weight: 600; }
-.btn-green:hover { background: var(--green2); }
-
-/* METRIC */
-.metric { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; }
-.metric-val { font-family: var(--sans); font-size: 1.8rem; font-weight: 800; color: var(--green); display: block; }
-.metric-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
-
-/* CONCEPT DETAIL */
-.concept-row { margin-bottom: 8px; }
-.concept-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
-.concept-val { font-size: 12px; color: var(--text2); line-height: 1.6; }
-
-/* SEARCH HIGHLIGHT */
-.highlight { background: rgba(0,255,136,0.2); color: var(--green); border-radius: 2px; }
-
-/* Q&A CARDS */
-.qa-filter-bar { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
-.qa-filter {
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 4px 10px;
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  cursor: pointer;
-  background: transparent;
-  color: var(--text2);
-  transition: all 0.15s;
-}
-.qa-filter:hover { color: var(--text); border-color: var(--text3); }
-.qa-filter.active { background: var(--green-dim2); color: var(--accent); border-color: rgba(0,255,136,0.3); }
-
-.qa-card { margin-bottom: 6px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-.qa-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  background: var(--bg2);
-  cursor: pointer;
-  transition: background 0.15s;
-  user-select: none;
-}
-.qa-header:hover { background: var(--bg3); }
-.qa-card.open > .qa-header { background: var(--green-dim); border-bottom: 1px solid var(--border); }
-
-.qa-num { font-size: 10px; color: var(--text3); font-weight: 600; min-width: 34px; flex-shrink: 0; }
-.qa-question { flex: 1; font-size: 12px; font-weight: 500; line-height: 1.4; }
-
-.qa-badge {
-  font-size: 9px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-weight: 600;
-  flex-shrink: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  white-space: nowrap;
-}
-.qa-diff-basic        { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
-.qa-diff-intermediate { background: rgba(77,166,255,0.1); color: var(--blue); border: 1px solid rgba(77,166,255,0.2); }
-.qa-diff-advanced     { background: rgba(255,153,102,0.1); color: var(--orange); border: 1px solid rgba(255,153,102,0.2); }
-
-.qa-bookmark {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 0 2px;
-  opacity: 0.25;
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.qa-bookmark:hover, .qa-bookmark.bookmarked { opacity: 1; }
-
-.qa-arrow { font-size: 10px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
-.qa-card.open > .qa-header > .qa-arrow { transform: rotate(180deg); }
-
-.qa-body { display: none; padding: 14px; background: var(--bg2); }
-.qa-card.open > .qa-body { display: block; }
-
-.qa-answer-label {
-  font-size: 9px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-.qa-answer-text { font-size: 12px; color: var(--text2); line-height: 1.7; margin-bottom: 10px; }
-
-/* COMPILER */
-.compiler-wrap {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.compiler-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  background: var(--bg3);
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.compiler-title { font-size: 11px; color: var(--accent); font-weight: 600; }
-.compiler-selectors { display: flex; gap: 6px; }
-.compiler-select {
-  font-family: var(--mono);
-  font-size: 10px;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  color: var(--text2);
-  padding: 3px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  outline: none;
-}
-.compiler-select:focus { border-color: var(--accent); }
-
-.editor-container {
-  display: flex;
-  background: var(--code-bg);
-  min-height: 260px;
-  max-height: 460px;
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.7;
-  overflow: hidden;
-}
-.line-numbers {
-  padding: 1rem 8px 1rem 10px;
-  color: var(--text3);
-  text-align: right;
-  min-width: 40px;
-  background: var(--bg3);
-  border-right: 1px solid var(--border);
-  user-select: none;
-  white-space: pre;
-  overflow: hidden;
-  font-size: 11px;
-  line-height: 1.7;
-  flex-shrink: 0;
-}
-#code-editor {
-  flex: 1;
-  padding: 1rem;
-  background: transparent;
-  border: none;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.7;
-  resize: none;
-  outline: none;
-  tab-size: 4;
-  white-space: pre;
-  overflow-wrap: normal;
-  overflow: auto;
-  min-height: 260px;
-}
-
-.compiler-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  background: var(--bg3);
-  border-top: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-.compiler-status {
-  font-size: 11px;
-  color: var(--text3);
-  margin-left: 6px;
-}
-.compiler-status.running { color: var(--accent); }
-.compiler-status.error   { color: #ff6666; }
-.compiler-status.success { color: var(--accent); }
-
-.compiler-output {
-  border-top: 1px solid var(--border);
-  padding: 10px 12px;
-  background: var(--code-bg);
-}
-.output-label {
-  font-size: 9px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-.output-content {
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--text2);
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  max-height: 220px;
-  overflow-y: auto;
-  margin: 0;
-}
-.output-content.success { color: var(--text); }
-.output-content.error   { color: #ff6666; }
-
-.snippets-bar {
-  padding: 8px 12px;
-  background: var(--bg3);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.snippets-label { font-size: 10px; color: var(--text3); white-space: nowrap; }
-#snippets-list { display: flex; gap: 5px; flex-wrap: wrap; }
-.snippet-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 3px 8px;
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  cursor: pointer;
-  background: var(--bg2);
-  color: var(--text2);
-  transition: all 0.15s;
-}
-.snippet-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-/* TOPBAR */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 7px 1.25rem;
-  display: flex;
-  align-items: center;
-}
-
-/* GLOBAL SEARCH */
-.global-search-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 680px;
-  margin: 0 auto;
-}
-.search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text3);
-  font-size: 14px;
-  pointer-events: none;
-  z-index: 1;
-}
-.global-search-input {
-  width: 100%;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 7px 72px 7px 30px;
-  border-radius: var(--radius);
-  outline: none;
-  transition: border-color 0.15s;
-}
-.global-search-input::placeholder { color: var(--text3); }
-.global-search-input:focus { border-color: var(--accent); }
-
-/* FONT SIZE CONTROLS */
-.font-controls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 10px;
-  flex-shrink: 0;
-}
-.font-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  color: var(--text2);
-  padding: 3px 7px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.font-btn:hover { color: var(--accent); border-color: var(--accent); }
-.font-size-display {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-  min-width: 28px;
-  text-align: center;
-}
-@media (max-width: 500px) { .font-controls { display: none; } }
-
-.search-hint {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 9px;
-  color: var(--text3);
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  padding: 2px 5px;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-/* SEARCH RESULTS DROPDOWN */
-.search-results {
-  display: none;
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  max-height: 430px;
-  overflow-y: auto;
-  z-index: 400;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-}
-.search-results.open { display: block; }
-.sr-group { border-bottom: 1px solid var(--border); }
-.sr-group:last-child { border-bottom: none; }
-.sr-group-label {
-  font-size: 9px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 8px 12px 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.sr-count {
-  background: var(--bg3);
-  color: var(--accent);
-  font-size: 9px;
-  padding: 1px 5px;
-  border-radius: 8px;
-}
-.sr-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 7px 12px;
-  cursor: pointer;
-  transition: background 0.1s;
-}
-.sr-item:hover { background: var(--bg3); }
-.sr-dot { color: var(--text3); font-size: 10px; flex-shrink: 0; margin-top: 2px; }
-.sr-content { flex: 1; min-width: 0; }
-.sr-label { font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sr-sub { font-size: 10px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sr-ext { color: var(--text3); font-size: 11px; flex-shrink: 0; margin-top: 1px; text-decoration: none; }
-.sr-ext:hover { color: var(--accent); }
-.sr-empty { padding: 16px 12px; font-size: 12px; color: var(--text3); }
-.sr-highlight { background: var(--green-dim2); color: var(--accent); border-radius: 2px; padding: 0 1px; }
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { position: fixed; left: -220px; z-index: 100; top: 0; height: 100vh; transition: left 0.3s; }
-  .sidebar.open { left: 0; }
-  .section { padding: 1.25rem; }
-  .hero { padding: 1.5rem; }
-  .grid2, .grid3 { grid-template-columns: 1fr; }
-  .model-grid { grid-template-columns: 80px 1fr 1fr 1fr; font-size: 10px; }
-  .hero h1 { font-size: 1.5rem; }
-  .hamburger { display: flex; }
-  .global-search-input { padding-left: 48px; }
-  .search-hint { display: none; }
-}
-
-.hamburger {
-  display: none;
-  position: fixed;
-  top: 7px;
-  left: 12px;
-  z-index: 250;
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 6px 8px;
-  cursor: pointer;
-  flex-direction: column;
-  gap: 3px;
-}
-.hamburger span { display: block; width: 16px; height: 1px; background: var(--text); }
-
-/* BLINK */
-@keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
-.cursor { animation: blink 1s infinite; color: var(--green); }
-
-/* FADE IN */
-@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.fade-up { animation: fadeUp 0.4s ease forwards; }
-
-/* TOPIC HEADER */
-.topic-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.concept-nav { display: flex; gap: 6px; flex-wrap: wrap; }
-.cnav-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 3px 9px;
-  border: 1px solid var(--border2);
-  border-radius: 3px;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text2);
-  transition: all 0.15s;
-}
-.cnav-btn:hover { color: var(--text); }
-.cnav-btn.active { background: var(--green-dim2); color: var(--green); border-color: rgba(0,255,136,0.3); }
-
-/* STREAK GRID */
+/* STREAK */
 .streak-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; margin-top: 10px; }
-.streak-day {
+.s-day {
   aspect-ratio: 1;
   border-radius: 3px;
   border: 1px solid var(--border);
@@ -977,257 +533,539 @@ body {
   color: var(--text3);
   transition: all 0.15s;
 }
-.streak-day.done { background: var(--green); color: var(--bg); border-color: var(--green); }
-.streak-day.partial { background: var(--orange); color: var(--bg); border-color: var(--orange); }
-.streak-day.today { border-color: var(--blue); }
-.streak-day:hover { border-color: var(--text3); }
+.s-day:hover { border-color: var(--text3); }
+.s-day.done    { background: var(--accent); color: #000; border-color: var(--accent); }
+.s-day.partial { background: #ff9966; color: #000; border-color: #ff9966; }
+.s-day.today   { border-color: #4da6ff; }
+
+/* COMPILER */
+#editor {
+  width: 100%;
+  min-height: 320px;
+  background: var(--code-bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  color: #c9d1d9;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 12px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.7;
+  tab-size: 4;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+}
+#output {
+  background: var(--code-bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-size: 12px;
+  min-height: 60px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin-top: 8px;
+  color: var(--accent);
+  line-height: 1.65;
+}
+#output.error { color: #ff6666; }
+#output.idle  { color: var(--text3); }
+.compiler-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+.compiler-toolbar select {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  outline: none;
+}
+.compiler-toolbar select:focus { border-color: var(--accent); }
+#run-btn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#run-btn:hover { background: var(--accent2); }
+#run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.c-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.c-btn:hover { border-color: var(--accent); color: var(--accent); }
+#compiler-status { font-size: 11px; color: var(--text3); margin-left: 4px; }
+.snippet-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.snippet-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.snippet-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Q&A CARDS */
+.qa-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+.qa-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.qa-header:hover { background: var(--bg3); }
+.qa-header.open { background: rgba(0,255,136,0.05); border-bottom: 1px solid var(--border); }
+.qa-num { font-size: 11px; color: var(--accent); font-weight: 700; min-width: 38px; flex-shrink: 0; }
+.qa-q { flex: 1; font-size: 12px; font-weight: 500; line-height: 1.4; }
+.qa-diff { font-size: 9px; padding: 2px 6px; border-radius: 3px; flex-shrink: 0; text-transform: uppercase; font-weight: 600; }
+.qa-bm { cursor: pointer; font-size: 14px; padding: 0 4px; opacity: 0.4; background: none; border: none; transition: opacity 0.15s; flex-shrink: 0; }
+.qa-bm:hover { opacity: 1; }
+.qa-bm.saved { opacity: 1; filter: brightness(1.5); }
+.qa-arr { font-size: 10px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+.qa-header.open .qa-arr { transform: rotate(180deg); }
+.qa-body { display: none; padding: 12px; font-size: 12px; color: var(--text2); line-height: 1.7; }
+.qa-header.open + .qa-body { display: block; }
+
+/* Q&A FILTER TABS */
+.qa-tabs { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; }
+.qa-tab {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.qa-tab:hover { color: var(--text); border-color: var(--text3); }
+.qa-tab.active { background: rgba(0,255,136,0.1); color: var(--accent); border-color: rgba(0,255,136,0.3); }
+
+/* MEMORY MODEL GRID */
+.memory-grid {
+  display: grid;
+  grid-template-columns: 110px 1fr 1fr 1fr;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+.mg {
+  padding: 7px 10px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+.mg:nth-child(4n) { border-right: none; }
+.mg.head { background: var(--bg3); font-weight: 600; font-size: 10px; color: var(--text2); font-family: var(--font-sans); }
+.mg.row-label { font-weight: 600; font-size: 11px; color: var(--text); font-family: var(--font-mono); }
+.mg.read { color: #4da6ff; }
+.mg.mut  { color: #00ff88; }
+.mg.own  { color: #ff9966; }
+
+.model-rule {
+  background: var(--bg2);
+  border: 1px solid rgba(0,255,136,0.2);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-top: 12px;
+}
+
+/* HERO */
+.hero {
+  padding: 2.5rem 2.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,255,136,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.terminal-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 1rem; }
+.td { width: 10px; height: 10px; border-radius: 50%; }
+.td-r { background: #ff5f56; }
+.td-y { background: #ffbd2e; }
+.td-g { background: #27c93f; }
+.terminal-title { font-size: 11px; color: var(--text3); margin-left: 4px; }
+.hero h1 { font-family: var(--font-sans); font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 0.5rem; }
+.hero h1 .accent { color: var(--accent); }
+.cursor { animation: blink 1s infinite; color: var(--accent); }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.hero p { font-size: 13px; color: var(--text2); max-width: 560px; line-height: 1.7; }
+.hero-stats { display: flex; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat-num { font-family: var(--font-sans); font-size: 1.6rem; font-weight: 800; color: var(--accent); display: block; }
+.stat-label { font-size: 10px; color: var(--text3); }
+.hero-cmd {
+  margin-top: 1.5rem;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 12px;
+  color: var(--text2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.prompt { color: var(--accent); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.3s ease forwards; }
+
+/* HAMBURGER (mobile) */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 54px;
+  left: 12px;
+  z-index: 500;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 3px;
+}
+.hamburger span { display: block; width: 16px; height: 1px; background: var(--text); }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  #layout { grid-template-columns: 1fr; }
+  #sidebar {
+    position: fixed;
+    left: -220px;
+    top: 44px;
+    height: calc(100vh - 44px);
+    z-index: 300;
+    transition: left 0.3s;
+  }
+  #sidebar.open { left: 0; }
+  .hamburger { display: flex; }
+  .section { padding: 1rem; }
+  .hero { padding: 1.5rem; }
+  .hero h1 { font-size: 1.6rem; }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .memory-grid { grid-template-columns: 70px 1fr 1fr 1fr; font-size: 9px; }
+  .memory-grid .mg { font-size: 9px; padding: 5px 6px; }
+  #search-results { width: calc(100vw - 24px); left: 12px; transform: none; }
+}
+@media (max-width: 500px) {
+  #font-controls { display: none; }
+  .search-hint { display: none; }
+}
 </style>
 </head>
 <body>
 
-<button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="menu">
-  <span></span><span></span><span></span>
-</button>
-
-<!-- TOPBAR: GLOBAL SEARCH + FONT SIZE -->
-<div class="topbar" id="topbar">
-  <div class="global-search-wrap" id="global-search-wrap">
-    <span class="search-icon">⌕</span>
-    <input type="text" class="global-search-input" id="global-search-input"
-           placeholder="Search concepts, questions, DSA problems..."
+<!-- TOPBAR -->
+<div id="topbar">
+  <div id="search-wrap">
+    <span style="color:var(--text3);font-size:13px">⌕</span>
+    <input type="text" id="search-input" placeholder="Search concepts, questions, DSA problems..."
            autocomplete="off" spellcheck="false">
-    <span class="search-hint">Ctrl+K or /</span>
-    <div class="search-results" id="search-results"></div>
+    <kbd class="search-hint">Ctrl+K</kbd>
   </div>
-  <div class="font-controls">
-    <button class="font-btn" onclick="adjustFontSize(-1)" title="Decrease font size">A−</button>
-    <span id="font-size-display" class="font-size-display">13px</span>
-    <button class="font-btn" onclick="adjustFontSize(1)" title="Increase font size">A+</button>
+  <div id="font-controls">
+    <button onclick="adjustFont(-1)" title="Decrease font size">A−</button>
+    <span id="font-size-display">13px</span>
+    <button onclick="adjustFont(1)" title="Increase font size">A+</button>
   </div>
 </div>
 
-<div class="layout">
+<!-- SEARCH RESULTS DROPDOWN -->
+<div id="search-results"></div>
+
+<!-- HAMBURGER -->
+<button class="hamburger" onclick="toggleSidebar()" aria-label="menu">
+  <span></span><span></span><span></span>
+</button>
+
+<div id="layout">
 
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-      <div>
-        <div class="logo">rust<span>-prep</span></div>
-        <div class="version-badge">v2.0 · interview edition</div>
-      </div>
-      <div class="theme-switcher" id="theme-switcher">
-        <button class="theme-btn" onclick="toggleThemeMenu()">
-          <span id="theme-name">Dark</span> ▼
-        </button>
-        <div class="theme-menu" id="theme-menu"></div>
-      </div>
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">rust<span>-prep</span></div>
+    <div id="theme-wrap">
+      <button id="theme-btn" onclick="toggleThemeMenu()">
+        <span id="theme-name">Dark</span> ▾
+      </button>
+      <div id="theme-menu"></div>
     </div>
-    <div class="xp-bar-wrap">
-      <div class="xp-label"><span>0/29 done</span><span id="xp-num">0 xp</span></div>
-      <div class="xp-bar"><div class="xp-fill" id="xp-bar"></div></div>
+    <div class="version-badge">v2.0 · interview edition</div>
+    <div class="xp-row">
+      <span id="xp-done">0 done</span>
+      <span id="xp-num">0 xp</span>
     </div>
+    <div class="xp-bar-outer"><div id="xp-fill"></div></div>
   </div>
-  <div class="sidebar-search">
-    <input type="text" placeholder="/ search..." id="search-input" onkeyup="filterNav(this.value)">
+
+  <div id="sidebar-search">
+    <input type="text" id="nav-search" placeholder="/ filter nav..."
+           oninput="filterNav(this.value)">
   </div>
-  <nav id="nav-list">
-    <div class="nav-section">
-      <div class="nav-label">start</div>
-      <a class="nav-item active" onclick="showSection('home')" href="#"><span class="num">00</span>home<span class="nav-dot new"></span></a>
+
+  <nav>
+    <div class="nav-section-label">start</div>
+    <div class="nav-item active" data-section="home" onclick="showSection('home')">
+      <span class="nav-num">00</span>home<span class="nav-dot new"></span>
     </div>
-    <div class="nav-section">
-      <div class="nav-label">rust fundamentals</div>
-      <a class="nav-item" onclick="showSection('memory-model')" href="#"><span class="num">01</span>memory model<span class="nav-dot hot"></span></a>
-      <a class="nav-item" onclick="showSection('concepts')" href="#"><span class="num">02</span>12 concepts</a>
-      <a class="nav-item" onclick="showSection('programs')" href="#"><span class="num">03</span>15 programs</a>
-      <a class="nav-item" onclick="showSection('which-to-use')" href="#"><span class="num">04</span>which to use</a>
+
+    <div class="nav-section-label">rust fundamentals</div>
+    <div class="nav-item" data-section="memory-model" onclick="showSection('memory-model')">
+      <span class="nav-num">01</span>memory model<span class="nav-dot hot"></span>
     </div>
-    <div class="nav-section">
-      <div class="nav-label">DSA</div>
-      <a class="nav-item" onclick="showSection('dsa-patterns')" href="#"><span class="num">05</span>patterns guide</a>
-      <a class="nav-item" onclick="showSection('dsa-tracker')" href="#"><span class="num">06</span>problem tracker</a>
+    <div class="nav-item" data-section="concepts" onclick="showSection('concepts')">
+      <span class="nav-num">02</span>12 concepts
     </div>
-    <div class="nav-section">
-      <div class="nav-label">systems</div>
-      <a class="nav-item" onclick="showSection('os-concepts')" href="#"><span class="num">07</span>OS concepts</a>
-      <a class="nav-item" onclick="showSection('database')" href="#"><span class="num">08</span>databases</a>
+    <div class="nav-item" data-section="programs" onclick="showSection('programs')">
+      <span class="nav-num">03</span>15 programs
     </div>
-    <div class="nav-section">
-      <div class="nav-label">interview</div>
-      <a class="nav-item" onclick="showSection('rust-qa')" href="#"><span class="num">09</span>rust Q&A</a>
-      <a class="nav-item" onclick="showSection('os-qa')" href="#"><span class="num">10</span>OS / DB Q&A</a>
-      <a class="nav-item" onclick="showSection('quiz')" href="#"><span class="num">11</span>quiz mode<span class="nav-dot hot"></span></a>
+    <div class="nav-item" data-section="which-to-use" onclick="showSection('which-to-use')">
+      <span class="nav-num">04</span>which to use
     </div>
-    <div class="nav-section">
-      <div class="nav-label">progress</div>
-      <a class="nav-item" onclick="showSection('streak')" href="#"><span class="num">12</span>30-day streak</a>
+
+    <div class="nav-section-label">dsa</div>
+    <div class="nav-item" data-section="dsa-patterns" onclick="showSection('dsa-patterns')">
+      <span class="nav-num">05</span>patterns guide
     </div>
-    <div class="nav-section">
-      <div class="nav-label">tools</div>
-      <a class="nav-item" onclick="showSection('compiler')" href="#"><span class="num">13</span>compiler<span class="nav-dot new"></span></a>
+    <div class="nav-item" data-section="dsa-tracker" onclick="showSection('dsa-tracker')">
+      <span class="nav-num">06</span>problem tracker
+    </div>
+
+    <div class="nav-section-label">systems</div>
+    <div class="nav-item" data-section="os-concepts" onclick="showSection('os-concepts')">
+      <span class="nav-num">07</span>OS concepts
+    </div>
+    <div class="nav-item" data-section="database" onclick="showSection('database')">
+      <span class="nav-num">08</span>databases
+    </div>
+
+    <div class="nav-section-label">interview</div>
+    <div class="nav-item" data-section="rust-qa" onclick="showSection('rust-qa')">
+      <span class="nav-num">09</span>rust Q&amp;A
+    </div>
+    <div class="nav-item" data-section="os-qa" onclick="showSection('os-qa')">
+      <span class="nav-num">10</span>OS / DB Q&amp;A
+    </div>
+    <div class="nav-item" data-section="quiz" onclick="showSection('quiz')">
+      <span class="nav-num">11</span>quiz mode<span class="nav-dot hot"></span>
+    </div>
+
+    <div class="nav-section-label">progress</div>
+    <div class="nav-item" data-section="streak" onclick="showSection('streak')">
+      <span class="nav-num">12</span>30-day streak
+    </div>
+
+    <div class="nav-section-label">tools</div>
+    <div class="nav-item" data-section="compiler" onclick="showSection('compiler')">
+      <span class="nav-num">13</span>compiler<span class="nav-dot new"></span>
     </div>
   </nav>
 </aside>
 
-<!-- MAIN CONTENT -->
-<main class="main" id="main-content">
+<!-- MAIN -->
+<main id="main">
 
 <!-- HOME -->
 <div id="section-home" class="section active">
   <div class="hero">
     <div class="terminal-bar">
-      <div class="terminal-dot td-red"></div>
-      <div class="terminal-dot td-yellow"></div>
-      <div class="terminal-dot td-green"></div>
+      <div class="td td-r"></div>
+      <div class="td td-y"></div>
+      <div class="td td-g"></div>
       <span class="terminal-title">rust-prep — interview edition</span>
     </div>
     <h1>The <span class="accent">Rust</span> Interview<br>Prep System<span class="cursor">_</span></h1>
-    <p>Everything I learned: Rust internals, DSA patterns, OS concepts, databases, and ZK systems. Built for blockchain & protocol engineering interviews.</p>
+    <p>Everything I learned: Rust internals, DSA patterns, OS concepts, databases, and ZK systems. Built for blockchain &amp; protocol engineering interviews.</p>
     <div class="hero-stats">
       <div class="stat"><span class="stat-num">12</span><span class="stat-label">rust concepts</span></div>
       <div class="stat"><span class="stat-num">15</span><span class="stat-label">programs</span></div>
-      <div class="stat"><span class="stat-num">115</span><span class="stat-label">DSA problems</span></div>
-      <div class="stat"><span class="stat-num">40+</span><span class="stat-label">interview Q&A</span></div>
+      <div class="stat"><span class="stat-num">115+</span><span class="stat-label">DSA problems</span></div>
+      <div class="stat"><span class="stat-num">40+</span><span class="stat-label">interview Q&amp;A</span></div>
     </div>
-    <div class="hero-cmd">
-      <span class="prompt">$</span>
-      <span class="cmd">./start-learning</span>
-    </div>
+    <div class="hero-cmd"><span class="prompt">$</span> ./start-learning</div>
   </div>
 
-  <div style="padding: 2rem 2.5rem;">
-    <div class="section-header">
-      <div class="section-title">what's inside <span class="tag">v2.0</span></div>
-    </div>
+  <div style="padding:2rem 2.5rem">
+    <div class="section-title" style="margin-bottom:1rem">what's inside <span class="tag">v2.0</span></div>
     <div class="grid3">
       <div class="card" onclick="showSection('memory-model')" style="cursor:pointer">
-        <div style="font-size:1.5rem;margin-bottom:8px">🧠</div>
+        <div style="font-size:1.5rem;margin-bottom:6px">🧠</div>
         <div class="card-title">Memory Model</div>
-        <div class="card-sub">The three rules that explain everything in Rust: read &T, mutate &mut T, own T. Every concept maps to these.</div>
+        <div class="card-sub">The three rules: &amp;T read, &amp;mut T mutate, T own. Every Rust concept maps to one of these.</div>
         <div style="margin-top:8px"><span class="badge badge-green">core</span></div>
       </div>
       <div class="card" onclick="showSection('concepts')" style="cursor:pointer">
-        <div style="font-size:1.5rem;margin-bottom:8px">📚</div>
+        <div style="font-size:1.5rem;margin-bottom:6px">📚</div>
         <div class="card-title">12 Rust Concepts</div>
-        <div class="card-sub">Ownership, Borrowing, Lifetimes, Traits, Generics, Smart Pointers, Async, Concurrency, Unsafe, and more.</div>
+        <div class="card-sub">Ownership, Borrowing, Lifetimes, Traits, Generics, Smart Pointers, Async, Concurrency, Unsafe.</div>
         <div style="margin-top:8px"><span class="badge badge-blue">cheatsheet</span></div>
       </div>
       <div class="card" onclick="showSection('programs')" style="cursor:pointer">
-        <div style="font-size:1.5rem;margin-bottom:8px">💻</div>
+        <div style="font-size:1.5rem;margin-bottom:6px">💻</div>
         <div class="card-title">15 Programs</div>
-        <div class="card-sub">Leaderboard, rate limiter, LRU cache, Merkle tree, order book, NTT, Montgomery mul — all with interviewer angles.</div>
+        <div class="card-sub">Struct+impl, generics, Box LinkedList, iterators, Arc&lt;Mutex&gt;, channels, lifetimes, closures.</div>
         <div style="margin-top:8px"><span class="badge badge-orange">builds</span></div>
       </div>
       <div class="card" onclick="showSection('dsa-tracker')" style="cursor:pointer">
-        <div style="font-size:1.5rem;margin-bottom:8px">🎯</div>
+        <div style="font-size:1.5rem;margin-bottom:6px">🎯</div>
         <div class="card-title">DSA Problem Tracker</div>
-        <div class="card-sub">115+ problems organized by pattern. Two Pointers, Binary Search, Trees, Graphs, DP — with progress tracking.</div>
+        <div class="card-sub">115+ problems organized by pattern with progress tracking. Two Pointers through Graphs.</div>
         <div style="margin-top:8px"><span class="badge badge-purple">tracker</span></div>
       </div>
       <div class="card" onclick="showSection('os-concepts')" style="cursor:pointer">
-        <div style="font-size:1.5rem;margin-bottom:8px">🖥️</div>
+        <div style="font-size:1.5rem;margin-bottom:6px">🖥️</div>
         <div class="card-title">OS Concepts</div>
-        <div class="card-sub">Process vs Thread vs Task, parallelism vs concurrency, cache locality, virtual memory, sync primitives.</div>
-        <div style="margin-top:8px"><span class="badge badge-yellow">systems</span></div>
+        <div class="card-sub">Process vs Thread vs Task, parallelism vs concurrency, cache locality, sync primitives.</div>
+        <div style="margin-top:8px"><span class="badge badge-green">systems</span></div>
       </div>
       <div class="card" onclick="showSection('quiz')" style="cursor:pointer">
-        <div style="font-size:1.5rem;margin-bottom:8px">🎮</div>
+        <div style="font-size:1.5rem;margin-bottom:6px">🎮</div>
         <div class="card-title">Quiz Mode</div>
         <div class="card-sub">40+ interview questions across Rust, OS, and DB. Practice out loud — that's what actually works.</div>
         <div style="margin-top:8px"><span class="badge badge-red">practice</span></div>
       </div>
     </div>
-
-    <div class="card" style="margin-top:12px;border-color:rgba(0,255,136,0.2);background:var(--green-dim)">
-      <div class="card-title" style="color:var(--green)">🔑 The Core Insight</div>
-      <div class="card-sub" style="margin-top:6px">Every Rust concept — closures, iterators, async, traits, smart pointers — is just one of three rules applied to a different context: <strong style="color:var(--blue)">&T (read)</strong>, <strong style="color:var(--green)">&mut T (mutate)</strong>, or <strong style="color:var(--orange)">T (own)</strong>. When you understand this, every compiler error makes sense immediately.</div>
+    <div class="card" style="margin-top:4px;border-color:rgba(0,255,136,0.2);background:rgba(0,255,136,0.03)">
+      <div class="card-title" style="color:var(--accent)">🔑 The Core Insight</div>
+      <div class="card-sub" style="margin-top:6px">Every Rust concept is just one of three rules applied to a different context: <strong style="color:#4da6ff">&amp;T (read)</strong>, <strong style="color:#00ff88">&amp;mut T (mutate)</strong>, or <strong style="color:#ff9966">T (own)</strong>. When you understand this, every compiler error makes sense immediately.</div>
     </div>
   </div>
 </div>
 
 <!-- MEMORY MODEL -->
 <div id="section-memory-model" class="section">
-  <div class="section-header">
-    <div class="section-title">Memory Model <span class="tag">core</span></div>
-    <div class="section-sub">The three rules — every Rust concept maps to exactly one of these</div>
-  </div>
+  <div class="section-title">Memory Model <span class="tag">core</span></div>
+  <div class="section-sub">The three rules — every Rust concept maps to exactly one of these</div>
 
-  <div class="model-grid" style="margin-bottom:16px">
-    <div class="mg-cell mg-head">concept</div>
-    <div class="mg-cell mg-head mg-read">read &amp;T</div>
-    <div class="mg-cell mg-head mg-mut">&amp;mut T</div>
-    <div class="mg-cell mg-head mg-own">ownership T</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">variables</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">let x = &amp;val</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">let x = &amp;mut val</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">let x = val (move)</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">functions</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">fn f(x: &amp;T)</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">fn f(x: &amp;mut T)</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">fn f(x: T)</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">closures</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">Fn — borrows &amp;T</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">FnMut — &amp;mut T</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">FnOnce — moves T</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">iterators</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">.iter() → &amp;T</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">.iter_mut() → &amp;mut T</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">.into_iter() → T</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">smart ptrs</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">Rc::clone(&amp;val)</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">RefCell::borrow_mut()</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">Box::new(val)</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">threads</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">Arc (shared read)</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">Arc&lt;Mutex&lt;T&gt;&gt;</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">move || (transfer)</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px">async</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px">&amp;self in async fn</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px">&amp;mut self async fn</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px">move async { }</div>
-    <div class="mg-cell" style="font-weight:500;font-size:11px;border-bottom:none">channels</div>
-    <div class="mg-cell mg-read" style="font-family:var(--mono);font-size:10px;border-bottom:none">Receiver (reads)</div>
-    <div class="mg-cell mg-mut" style="font-family:var(--mono);font-size:10px;border-bottom:none">Sender::send(&amp;mut)</div>
-    <div class="mg-cell mg-own" style="font-family:var(--mono);font-size:10px;border-bottom:none">send(val) moves T</div>
+  <div class="memory-grid">
+    <div class="mg head">concept</div>
+    <div class="mg head read">&amp;T — read</div>
+    <div class="mg head mut">&amp;mut T — mutate</div>
+    <div class="mg head own">T — own</div>
+
+    <div class="mg row-label">variables</div>
+    <div class="mg read">let x = &amp;val</div>
+    <div class="mg mut">let x = &amp;mut val</div>
+    <div class="mg own">let x = val (move)</div>
+
+    <div class="mg row-label">functions</div>
+    <div class="mg read">fn f(x: &amp;T)</div>
+    <div class="mg mut">fn f(x: &amp;mut T)</div>
+    <div class="mg own">fn f(x: T)</div>
+
+    <div class="mg row-label">closures</div>
+    <div class="mg read">Fn — borrows &amp;T</div>
+    <div class="mg mut">FnMut — &amp;mut T</div>
+    <div class="mg own">FnOnce — moves T</div>
+
+    <div class="mg row-label">iterators</div>
+    <div class="mg read">.iter() → &amp;T</div>
+    <div class="mg mut">.iter_mut() → &amp;mut T</div>
+    <div class="mg own">.into_iter() → T</div>
+
+    <div class="mg row-label">smart ptrs</div>
+    <div class="mg read">Rc::clone(&amp;val)</div>
+    <div class="mg mut">RefCell::borrow_mut()</div>
+    <div class="mg own">Box::new(val)</div>
+
+    <div class="mg row-label">threads</div>
+    <div class="mg read">Arc (shared read)</div>
+    <div class="mg mut">Arc&lt;Mutex&lt;T&gt;&gt;</div>
+    <div class="mg own">move || (transfer)</div>
+
+    <div class="mg row-label">async</div>
+    <div class="mg read">&amp;self in async fn</div>
+    <div class="mg mut">&amp;mut self async fn</div>
+    <div class="mg own">move async { }</div>
+
+    <div class="mg row-label" style="border-bottom:none">channels</div>
+    <div class="mg read" style="border-bottom:none">Receiver (reads)</div>
+    <div class="mg mut" style="border-bottom:none">Sender::send(&amp;mut)</div>
+    <div class="mg own" style="border-bottom:none">send(val) moves T</div>
   </div>
 
   <div class="grid2">
     <div class="card" style="border-color:rgba(77,166,255,0.3)">
-      <div class="card-title" style="color:var(--blue)">The one mental check</div>
+      <div class="card-title" style="color:#4da6ff">The one mental check</div>
       <div class="card-sub" style="margin-top:6px">Before writing any Rust code, ask: <strong style="color:var(--text)">"Does this need to read, mutate, or own the data?"</strong><br><br>
-      <span style="color:var(--blue)">&amp;T</span> — read, cheapest, many at once<br>
-      <span style="color:var(--green)">&amp;mut T</span> — exclusive write, one at a time<br>
-      <span style="color:var(--orange)">T</span> — moves data, Drop at end</div>
+      <span style="color:#4da6ff">&amp;T</span> — read, cheapest, many at once<br>
+      <span style="color:#00ff88">&amp;mut T</span> — exclusive write, one at a time<br>
+      <span style="color:#ff9966">T</span> — moves data, Drop at end</div>
     </div>
     <div class="card" style="border-color:rgba(255,153,102,0.3)">
-      <div class="card-title" style="color:var(--orange)">Interview anchor</div>
-      <div class="card-sub" style="margin-top:6px">Every "why does Rust need X?" question answered:<br><br>
-      "Why Arc?" → multiple owners need to <span style="color:var(--blue)">read T</span> across threads<br>
-      "Why Mutex?" → need to <span style="color:var(--green)">mutate T</span> across threads<br>
-      "Why FnOnce?" → closure <span style="color:var(--orange)">owns T</span> — can only run once<br>
-      "Why iter_mut()?" → need <span style="color:var(--green)">mutable &amp;mut T</span></div>
+      <div class="card-title" style="color:#ff9966">Interview anchor</div>
+      <div class="card-sub" style="margin-top:6px">"Why Arc?" → multiple owners need to <span style="color:#4da6ff">read T</span> across threads<br>"Why Mutex?" → need to <span style="color:#00ff88">mutate T</span> across threads<br>"Why FnOnce?" → closure <span style="color:#ff9966">owns T</span> — can only run once<br>"Why iter_mut()?" → need <span style="color:#00ff88">&amp;mut T</span></div>
     </div>
   </div>
 </div>
 
 <!-- CONCEPTS -->
 <div id="section-concepts" class="section">
-  <div class="section-header">
-    <div class="section-title">12 Rust Concepts <span class="tag">cheatsheet</span></div>
-    <div class="section-sub">Click concept → see when to use, avoid, pro tip, interview line, examples</div>
-  </div>
-  <div class="concept-nav" id="concept-nav" style="margin-bottom:16px"></div>
+  <div class="section-title">12 Rust Concepts <span class="tag">cheatsheet</span></div>
+  <div class="section-sub">Click a concept → see when to use, avoid, pro tip, interview line, examples</div>
+  <div id="concept-nav" style="margin-bottom:14px"></div>
   <div id="concept-detail"></div>
 </div>
 
 <!-- PROGRAMS -->
 <div id="section-programs" class="section">
-  <div class="section-header">
-    <div class="section-title">15 Programs <span class="tag">builds</span></div>
-    <div class="section-sub">Build each one from memory. Close the tab, write it blank, check, repeat next day.</div>
-  </div>
-  <div class="grid3" style="margin-bottom:16px">
+  <div class="section-title">15 Programs <span class="tag">builds</span></div>
+  <div class="section-sub">Build each one from memory. Close the tab, write it blank, check, repeat next day.</div>
+  <div class="grid3" style="margin-bottom:14px">
     <div class="metric"><span class="metric-val" id="p-done">0</span><span class="metric-label">done</span></div>
     <div class="metric"><span class="metric-val" id="p-rem">15</span><span class="metric-label">remaining</span></div>
     <div class="metric"><span class="metric-val" id="p-pct">0%</span><span class="metric-label">complete</span></div>
@@ -1237,10 +1075,8 @@ body {
 
 <!-- WHICH TO USE -->
 <div id="section-which-to-use" class="section">
-  <div class="section-header">
-    <div class="section-title">Which to Use <span class="tag">decisions</span></div>
-    <div class="section-sub">Every decision mapped to read / mutate / own</div>
-  </div>
+  <div class="section-title">Which to Use <span class="tag">decisions</span></div>
+  <div class="section-sub">Every decision mapped to read / mutate / own</div>
   <div class="card" style="margin-bottom:12px">
     <div class="card-title" style="margin-bottom:10px">decision guide</div>
     <div id="decision-list"></div>
@@ -1268,21 +1104,19 @@ custom errors?      thiserror crate</pre>
 
 <!-- DSA PATTERNS -->
 <div id="section-dsa-patterns" class="section">
-  <div class="section-header">
-    <div class="section-title">DSA Pattern Guide <span class="tag">approach</span></div>
-    <div class="section-sub">How to identify patterns + approach templates for each</div>
-  </div>
+  <div class="section-title">DSA Pattern Guide <span class="tag">approach</span></div>
+  <div class="section-sub">How to identify patterns + approach templates for each</div>
 
   <div class="card" style="margin-bottom:12px;border-color:rgba(0,255,136,0.2)">
-    <div class="card-title" style="color:var(--green)">Pattern Identification — Decision Tree</div>
+    <div class="card-title" style="color:var(--accent)">Pattern Identification — Decision Tree</div>
     <div style="font-size:12px;color:var(--text2);line-height:2;margin-top:8px">
       Is window/subarray size <strong>fixed</strong>? → <span class="badge badge-blue">Sliding Window fixed</span><br>
       Need to find <strong>two elements</strong> in sorted array? → <span class="badge badge-green">Two Pointers</span><br>
       Need <strong>max/min sum</strong> subarray? → <span class="badge badge-orange">Kadane</span><br>
       Need <strong>count subarrays</strong> with exact sum? → <span class="badge badge-purple">Prefix Sum + HashMap</span><br>
-      Linked list <strong>cycle</strong> or <strong>middle</strong>? → <span class="badge badge-red">Fast & Slow Pointers</span><br>
+      Linked list <strong>cycle</strong> or <strong>middle</strong>? → <span class="badge badge-red">Fast &amp; Slow Pointers</span><br>
       Sorted array, <strong>find value</strong>? → <span class="badge badge-blue">Binary Search</span><br>
-      <strong>Answer space</strong> — minimize/maximize something? → <span class="badge badge-blue">Binary Search on Answer</span><br>
+      <strong>Answer space</strong> — minimize/maximize? → <span class="badge badge-blue">Binary Search on Answer</span><br>
       Tree — <strong>path/depth/single node</strong>? → <span class="badge badge-green">DFS recursive</span><br>
       Tree — <strong>level by level</strong>? → <span class="badge badge-orange">BFS + queue</span>
     </div>
@@ -1300,11 +1134,11 @@ custom errors?      thiserror crate</pre>
   <div id="pat-two-ptr" class="tab-pane active">
     <div class="card">
       <div class="card-title">Two Pointers — "squeeze from both ends"</div>
-      <div class="card-sub" style="margin:8px 0">When: sorted array, find two elements satisfying a condition. Mental model: left pointer and right pointer, squeeze inward based on comparison.</div>
+      <div class="card-sub" style="margin:8px 0">Sorted array, find two elements satisfying a condition. Left + right pointers, squeeze inward based on comparison.</div>
       <pre class="code-block">let (mut l, mut r) = (0, nums.len() - 1);
 while l &lt; r {
     let sum = nums[l] + nums[r];
-    match sum.cmp(&target) {
+    match sum.cmp(&amp;target) {
         Equal   =&gt; { /* found */ }
         Less    =&gt; l += 1,   // sum too small → move left right
         Greater =&gt; r -= 1,   // sum too big → move right left
@@ -1321,11 +1155,10 @@ while l &lt; r {
       <pre class="code-block">// Variable window — smallest subarray with sum ≥ target
 let (mut l, mut sum) = (0, 0);
 for r in 0..nums.len() {
-    sum += nums[r];                     // expand right
-    while sum &gt;= target {              // shrink left
+    sum += nums[r];                      // expand right
+    while sum &gt;= target {               // shrink left
         ans = ans.min(r - l + 1);
-        sum -= nums[l];
-        l += 1;
+        sum -= nums[l]; l += 1;
     }
 }
 // Key: right pointer never goes back → O(n)</pre>
@@ -1360,7 +1193,7 @@ for &amp;n in &amp;nums {
       <pre class="code-block">// Classic — find in sorted array
 let (mut lo, mut hi) = (0, nums.len() - 1);
 while lo &lt;= hi {
-    let mid = lo + (hi - lo) / 2;  // ← usize overflow safe!
+    let mid = lo + (hi - lo) / 2;  // usize overflow safe
     match nums[mid].cmp(&amp;target) {
         Equal   =&gt; return mid as i32,
         Less    =&gt; lo = mid + 1,
@@ -1370,12 +1203,11 @@ while lo &lt;= hi {
 
 // Answer space — minimize X such that feasible(X) is true
 let (mut lo, mut hi) = (1, *piles.iter().max().unwrap());
-while lo &lt; hi {                    // ← lo &lt; hi, not &lt;=
+while lo &lt; hi {                     // lo &lt; hi, not &lt;=
     let mid = lo + (hi - lo) / 2;
-    if feasible(mid) { hi = mid; } // mid works, try smaller
+    if feasible(mid) { hi = mid; }  // mid works, try smaller
     else             { lo = mid + 1; }
-}
-// lo is the answer</pre>
+}  // lo is the answer</pre>
     </div>
   </div>
 
@@ -1387,7 +1219,7 @@ fn dfs(node: Option&lt;&amp;TreeNode&gt;) -&gt; i32 {
     let node = match node { Some(n) =&gt; n, None =&gt; return 0 };
     let left  = dfs(node.left.as_deref());
     let right = dfs(node.right.as_deref());
-    left.max(right) + 1   // ← current node logic here
+    left.max(right) + 1   // current node logic here
 }
 
 // BFS — level order
@@ -1407,9 +1239,7 @@ while let Some(node) = queue.pop_front() {
 fn dfs(node: usize, adj: &amp;Vec&lt;Vec&lt;usize&gt;&gt;,
        visited: &amp;mut HashSet&lt;usize&gt;) {
     if !visited.insert(node) { return; }  // already visited
-    for &amp;neighbor in &amp;adj[node] {
-        dfs(neighbor, adj, visited);
-    }
+    for &amp;nb in &amp;adj[node] { dfs(nb, adj, visited); }
 }
 
 // BFS — shortest path
@@ -1431,60 +1261,48 @@ while !queue.is_empty() {
 
 <!-- DSA TRACKER -->
 <div id="section-dsa-tracker" class="section">
-  <div class="section-header">
-    <div class="section-title">Problem Tracker <span class="tag">115+ problems</span></div>
-    <div class="section-sub">Click problems to mark solved. Progress saved in browser.</div>
-  </div>
+  <div class="section-title">Problem Tracker <span class="tag">115+ problems</span></div>
+  <div class="section-sub">Click problems to mark solved. Progress saved in browser.</div>
   <div class="grid3" style="margin-bottom:12px" id="dsa-metrics"></div>
-  <div id="dsa-patterns-list"></div>
+  <div id="dsa-list"></div>
 </div>
 
 <!-- OS CONCEPTS -->
 <div id="section-os-concepts" class="section">
-  <div class="section-header">
-    <div class="section-title">OS Concepts <span class="tag">systems</span></div>
-    <div class="section-sub">Process, threads, tasks, memory, cache, scheduling — for senior Rust & ZK prover roles</div>
-  </div>
-  <div class="concept-nav" id="os-nav" style="margin-bottom:16px"></div>
+  <div class="section-title">OS Concepts <span class="tag">systems</span></div>
+  <div class="section-sub">Process, threads, tasks, scheduling, cache locality, sync primitives</div>
+  <div id="os-nav" style="margin-bottom:14px"></div>
   <div id="os-detail"></div>
 </div>
 
 <!-- DATABASE -->
 <div id="section-database" class="section">
-  <div class="section-header">
-    <div class="section-title">Databases <span class="tag">backend</span></div>
-    <div class="section-sub">ACID, indexes, N+1, connection pooling, CAP theorem</div>
-  </div>
-  <div class="concept-nav" id="db-nav" style="margin-bottom:16px"></div>
+  <div class="section-title">Databases <span class="tag">backend</span></div>
+  <div class="section-sub">ACID, indexes, N+1, connection pooling, CAP theorem</div>
+  <div id="db-nav" style="margin-bottom:14px"></div>
   <div id="db-detail"></div>
 </div>
 
 <!-- RUST Q&A -->
 <div id="section-rust-qa" class="section">
-  <div class="section-header">
-    <div class="section-title">Rust Interview Q&A <span class="tag">10 questions</span></div>
-    <div class="section-sub">Click to expand. Bookmark questions to review later. Practice out loud.</div>
-  </div>
-  <div class="qa-filter-bar" id="rust-qa-cats"></div>
+  <div class="section-title">Rust Interview Q&amp;A <span class="tag" id="rust-qa-count">10 questions</span></div>
+  <div class="section-sub">Click to expand. Bookmark to review later. Practice answers out loud.</div>
+  <div class="qa-tabs" id="rust-qa-tabs"></div>
   <div id="rust-qa-list"></div>
 </div>
 
 <!-- OS/DB Q&A -->
 <div id="section-os-qa" class="section">
-  <div class="section-header">
-    <div class="section-title">OS / DB Interview Q&A <span class="tag">6 questions</span></div>
-    <div class="section-sub">Systems-level questions for protocol & ZK roles</div>
-  </div>
-  <div class="qa-filter-bar" id="osdb-qa-cats"></div>
+  <div class="section-title">OS / DB Interview Q&amp;A <span class="tag" id="osdb-qa-count">6 questions</span></div>
+  <div class="section-sub">Systems-level questions for protocol &amp; ZK roles</div>
+  <div class="qa-tabs" id="osdb-qa-tabs"></div>
   <div id="osdb-qa-list"></div>
 </div>
 
 <!-- QUIZ -->
 <div id="section-quiz" class="section">
-  <div class="section-header">
-    <div class="section-title">Quiz Mode <span class="tag">practice</span></div>
-    <div class="section-sub">Question appears. Think. Reveal answer. Rate yourself honestly.</div>
-  </div>
+  <div class="section-title">Quiz Mode <span class="tag">practice</span></div>
+  <div class="section-sub">Question appears. Think. Reveal answer. Rate yourself honestly.</div>
   <div class="grid3" style="margin-bottom:16px">
     <div class="metric"><span class="metric-val" id="quiz-score">0</span><span class="metric-label">score</span></div>
     <div class="metric"><span class="metric-val" id="quiz-attempt">0</span><span class="metric-label">attempted</span></div>
@@ -1492,101 +1310,81 @@ while !queue.is_empty() {
   </div>
   <div id="quiz-card"></div>
   <div style="display:flex;gap:8px;margin-top:12px">
-    <button class="btn btn-green" onclick="nextQuiz()">next question →</button>
-    <button class="btn" onclick="shuffleQuiz()">shuffle</button>
+    <button class="c-btn" onclick="nextQuiz()">next →</button>
+    <button class="c-btn" onclick="shuffleQuiz()">shuffle</button>
   </div>
 </div>
 
 <!-- STREAK -->
 <div id="section-streak" class="section">
-  <div class="section-header">
-    <div class="section-title">30-Day Streak <span class="tag">progress</span></div>
-    <div class="section-sub">Click day to toggle: done (green) / partial (orange) / pending</div>
-  </div>
+  <div class="section-title">30-Day Streak <span class="tag">progress</span></div>
+  <div class="section-sub">Click day to toggle: done (green) / partial (orange) / pending</div>
   <div class="card">
     <div class="streak-grid" id="streak-grid"></div>
     <div style="display:flex;gap:16px;margin-top:12px">
-      <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:var(--green);border-radius:2px;display:inline-block"></span>done</span>
-      <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:var(--orange);border-radius:2px;display:inline-block"></span>partial</span>
+      <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px">
+        <span style="width:10px;height:10px;background:var(--accent);border-radius:2px;display:inline-block"></span>done
+      </span>
+      <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px">
+        <span style="width:10px;height:10px;background:#ff9966;border-radius:2px;display:inline-block"></span>partial
+      </span>
     </div>
   </div>
-  <div class="card" style="margin-top:12px">
+  <div class="card" style="margin-top:10px">
     <div class="card-title" style="margin-bottom:10px">week themes</div>
     <div style="font-size:12px">
-      <div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">Week 1 (May 26–Jun 1)<span class="badge badge-green">Rust foundation + Two Pointers</span></div>
-      <div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">Week 2 (Jun 2–8)<span class="badge badge-blue">Blockchain depth + Binary Search</span></div>
-      <div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">Week 3 (Jun 9–15)<span class="badge badge-orange">Apply 10/day + Stack + Trees</span></div>
-      <div style="padding:6px 0;display:flex;justify-content:space-between">Week 4 (Jun 16–22)<span class="badge badge-purple">Mock interviews + Graphs + DP</span></div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+        Week 1 (May 26–Jun 1)<span class="badge badge-green">Rust foundation + Two Pointers</span>
+      </div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+        Week 2 (Jun 2–8)<span class="badge badge-blue">Blockchain depth + Binary Search</span>
+      </div>
+      <div style="padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+        Week 3 (Jun 9–15)<span class="badge badge-orange">Apply 10/day + Stack + Trees</span>
+      </div>
+      <div style="padding:6px 0;display:flex;justify-content:space-between">
+        Week 4 (Jun 16–22)<span class="badge badge-purple">Mock interviews + Graphs + DP</span>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- COMPILER -->
 <div id="section-compiler" class="section">
-  <div class="section-header">
-    <div class="section-title">Rust Compiler <span class="tag">playground</span></div>
-    <div class="section-sub">Write and run Rust via the official Rust Playground API · Ctrl+Enter to run</div>
+  <div class="section-title">Rust Compiler <span class="tag">playground</span></div>
+  <div class="section-sub">Write and run Rust via the official Rust Playground API · Ctrl+Enter to run</div>
+
+  <div class="compiler-toolbar">
+    <button id="run-btn" onclick="runCode()">▶ Run</button>
+    <select id="channel-sel">
+      <option value="stable">stable</option>
+      <option value="beta">beta</option>
+      <option value="nightly">nightly</option>
+    </select>
+    <select id="edition-sel">
+      <option value="2021">2021</option>
+      <option value="2018">2018</option>
+      <option value="2015">2015</option>
+    </select>
+    <button class="c-btn" onclick="formatCode()">⬡ Format</button>
+    <button class="c-btn" onclick="clearEditor()">✕ Clear</button>
+    <button class="c-btn" onclick="copyCode()">⎘ Copy</button>
+    <span id="compiler-status"></span>
   </div>
 
-  <div class="compiler-wrap">
-    <!-- toolbar -->
-    <div class="compiler-toolbar">
-      <span class="compiler-title">rust-prep compiler</span>
-      <div class="compiler-selectors">
-        <select id="compiler-channel" class="compiler-select" title="Channel">
-          <option value="stable">stable</option>
-          <option value="beta">beta</option>
-          <option value="nightly">nightly</option>
-        </select>
-        <select id="compiler-edition" class="compiler-select" title="Edition">
-          <option value="2021">2021</option>
-          <option value="2018">2018</option>
-          <option value="2015">2015</option>
-        </select>
-      </div>
-    </div>
+  <textarea id="editor" spellcheck="false" autocorrect="off" autocapitalize="off"
+            aria-label="Rust code editor"></textarea>
 
-    <!-- code editor -->
-    <div class="editor-container">
-      <div class="line-numbers" id="line-numbers">1</div>
-      <textarea id="code-editor"
-                spellcheck="false"
-                autocorrect="off"
-                autocapitalize="off"
-                autocomplete="off"
-                aria-label="Rust code editor"></textarea>
-    </div>
+  <pre id="output" class="idle">// Press ▶ Run to execute your code</pre>
 
-    <!-- action bar -->
-    <div class="compiler-actions">
-      <button class="btn btn-green" onclick="runCode()" title="Ctrl+Enter">▶ Run</button>
-      <button class="btn" onclick="formatCode()">⬡ Format</button>
-      <button class="btn" onclick="clearEditor()">✕ Clear</button>
-      <button class="btn" onclick="copyCode()">⎘ Copy</button>
-      <span id="compiler-status" class="compiler-status"></span>
-    </div>
-
-    <!-- output -->
-    <div class="compiler-output">
-      <div class="output-label">output</div>
-      <pre id="output-content" class="output-content">// Press ▶ Run to execute your code</pre>
-    </div>
-
-    <!-- snippets -->
-    <div class="snippets-bar">
-      <span class="snippets-label">quick snippets:</span>
-      <div id="snippets-list"></div>
-    </div>
-  </div>
+  <div class="snippet-btns" id="snippet-btns"></div>
 </div>
 
 </main>
 </div>
 
-<script src="themes.js"></script>
-<script src="data.js"></script>
-<script src="search.js"></script>
-<script src="compiler.js"></script>
-<script src="app.js"></script>
+<script>
+// JS will be added in steps 2-4
+</script>
 </body>
 </html>
